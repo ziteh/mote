@@ -16,6 +16,7 @@ function normalize(tag: string) {
 export default function TagEditor(props: Props) {
   const known = useTags();
   const [draft, setDraft] = createSignal("");
+  let input: HTMLInputElement | undefined;
 
   /** Existing tags not yet on the note, plus the draft when it would be new. */
   const options = createMemo(() => {
@@ -30,6 +31,8 @@ export default function TagEditor(props: Props) {
   });
 
   const add = (picked: string[]) => {
+    setDraft("");
+    if (input) input.value = "";
     const tag = picked.at(-1);
     const value = tag && normalize(tag);
     if (value && !props.tags.includes(value)) {
@@ -77,7 +80,10 @@ export default function TagEditor(props: Props) {
         )}
       >
         <ComboboxPrimitive.Control>
-          <ComboboxPrimitive.Input class="h-7 w-28 rounded-md border border-input bg-transparent px-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring" />
+          <ComboboxPrimitive.Input
+            ref={input}
+            class="h-7 w-28 rounded-md border border-input bg-transparent px-2 text-xs placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring"
+          />
         </ComboboxPrimitive.Control>
         <ComboboxPrimitive.Portal>
           <ComboboxPrimitive.Content class="relative z-50 min-w-32 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-80">
