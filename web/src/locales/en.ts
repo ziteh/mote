@@ -40,6 +40,8 @@ export default {
   statusError: "Save failed",
   noteInfo: "Note info",
   formatNote: "Format note",
+  toggleSidebar: "Toggle sidebar",
+  toggleNoteList: "Toggle note list",
   toggleSplitView: "Toggle split view",
   undo: "Undo",
   redo: "Redo",

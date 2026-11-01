@@ -1,6 +1,9 @@
+import { useContext as useResizableContext } from "@corvu/resizable";
 import { useNavigate, useParams } from "@solidjs/router";
 import { createSignal, onCleanup, onMount, Show } from "solid-js";
 import { useRescan } from "~/api/queries";
+import ListIcon from "~/assets/list.svg";
+import SidebarIcon from "~/assets/sidebar.svg";
 import { useFilters } from "~/lib/filters";
 import { t } from "~/lib/i18n";
 import { createIsDesktop } from "~/lib/media";
@@ -29,11 +32,22 @@ export default function Layout() {
     <div class="h-full">
       <Show when={isDesktop()} fallback={<MobileLayout id={params.id} />}>
         <Resizable>
-          <ResizablePanel initialSize={SIDEBAR_SIZE} minSize={MIN_PANEL_SIZE}>
+          <PanelToggles />
+          <ResizablePanel
+            class="overflow-hidden"
+            initialSize={SIDEBAR_SIZE}
+            minSize={MIN_PANEL_SIZE}
+            collapsible
+          >
             <Sidebar />
           </ResizablePanel>
           <ResizableHandle />
-          <ResizablePanel initialSize={LIST_SIZE} minSize={MIN_PANEL_SIZE}>
+          <ResizablePanel
+            class="overflow-hidden"
+            initialSize={LIST_SIZE}
+            minSize={MIN_PANEL_SIZE}
+            collapsible
+          >
             <NoteList selectedId={params.id} />
           </ResizablePanel>
           <ResizableHandle />
@@ -45,6 +59,43 @@ export default function Layout() {
           </ResizablePanel>
         </Resizable>
       </Show>
+    </div>
+  );
+}
+
+/** Rail that stays visible so collapsed panels can be brought back. */
+function PanelToggles() {
+  const resizable = useResizableContext();
+
+  const toggle = (index: number) =>
+    resizable.sizes()[index] === 0
+      ? resizable.expand(index)
+      : resizable.collapse(index);
+
+  return (
+    <div class="flex w-9 shrink-0 flex-col items-center gap-1 border-r py-2">
+      <Button
+        variant="ghost"
+        size="icon"
+        class="size-7 [&>svg]:size-4"
+        classList={{ "bg-accent": resizable.sizes()[0] !== 0 }}
+        aria-label={t("toggleSidebar")}
+        title={t("toggleSidebar")}
+        onClick={() => toggle(0)}
+      >
+        <SidebarIcon />
+      </Button>
+      <Button
+        variant="ghost"
+        size="icon"
+        class="size-7 [&>svg]:size-4"
+        classList={{ "bg-accent": resizable.sizes()[1] !== 0 }}
+        aria-label={t("toggleNoteList")}
+        title={t("toggleNoteList")}
+        onClick={() => toggle(1)}
+      >
+        <ListIcon />
+      </Button>
     </div>
   );
 }

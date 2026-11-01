@@ -42,6 +42,8 @@ const zhHant: Record<keyof typeof en, string> = {
   statusError: "儲存失敗",
   noteInfo: "筆記資訊",
   formatNote: "格式化筆記",
+  toggleSidebar: "切換側邊欄",
+  toggleNoteList: "切換筆記清單",
   toggleSplitView: "切換雙欄模式",
   undo: "復原",
   redo: "重做",
