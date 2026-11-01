@@ -21,6 +21,7 @@ lerna-debug.log*
 *.db
 *.local
 *.local.*
+*.tmp
 
 # OS
 .DS_Store

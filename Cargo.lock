@@ -2449,7 +2449,7 @@ dependencies = [
 
 [[package]]
 name = "web-note-core"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "blake3",
@@ -2467,7 +2467,7 @@ dependencies = [
 
 [[package]]
 name = "web-note-server"
-version = "0.1.0"
+version = "0.3.0"
 dependencies = [
  "anyhow",
  "axum",
