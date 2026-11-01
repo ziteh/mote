@@ -90,7 +90,7 @@ function touchesSelection(state: EditorState, from: number, to: number) {
   return state.selection.ranges.some((r) => r.from <= to && r.to >= from);
 }
 
-/** Shows `[[id|alias]]` as the note's current title; Ctrl/Cmd-click opens it. */
+/** Shows `[[id|alias]]` as the note's current title; clicking it opens the note. */
 export function wikilinks(
   lookup: NoteLookup,
   onOpen: (id: string) => void,
@@ -119,7 +119,7 @@ export function wikilinks(
           const target = event.target as HTMLElement;
           const el = target.closest<HTMLElement>(".cm-wikilink");
           const id = el?.dataset.noteId;
-          if (!id || !(event.metaKey || event.ctrlKey)) return false;
+          if (!id || event.button !== 0) return false;
           event.preventDefault();
           onOpen(id);
           return true;
