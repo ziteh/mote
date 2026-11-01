@@ -29,8 +29,8 @@ export default function TagEditor(props: Props) {
     return names;
   });
 
-  const add = (tag: string | null) => {
-    setDraft("");
+  const add = (picked: string[]) => {
+    const tag = picked.at(-1);
     const value = tag && normalize(tag);
     if (value && !props.tags.includes(value)) {
       props.onChange([...props.tags, value]);
@@ -57,8 +57,10 @@ export default function TagEditor(props: Props) {
         )}
       </For>
       <ComboboxPrimitive.Root<string>
+        multiple
+        closeOnSelection
         options={options()}
-        value={null}
+        value={[]}
         onChange={add}
         onInputChange={setDraft}
         allowsEmptyCollection
