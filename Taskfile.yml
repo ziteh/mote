@@ -8,18 +8,25 @@ vars:
 silent: true
 tasks:
   default:
-    aliases: [dev]
+    desc: List all tasks
+    cmds:
+      - task --list-all
+  dev:
+    desc: Start development server, including backend and frontend
     deps: [dev-be, dev-fe]
 
   dev-be:
+    desc: Start development server for backend
     cmds:
       - cargo run -p {{.APP}} --features swagger
 
   dev-fe:
+    desc: Start development server for frontend
     cmds:
       - pnpm --dir web dev
 
   release:
+    desc: Build and release binary
     aliases: [build]
     cmds:
       - task: openapi
@@ -28,6 +35,7 @@ tasks:
       - cargo build --release -p {{.APP}}
 
   openapi:
+    desc: Generate OpenAPI specification schema
     sources:
       - crates/**/*.rs
       - Cargo.toml
@@ -42,6 +50,7 @@ tasks:
       - pnpm --dir web gen:api
 
   init:
+    desc: Initialize project, install dependencies and setup git hooks
     aliases: [i]
     cmds:
       - pnpm --dir web install
