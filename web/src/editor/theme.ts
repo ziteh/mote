@@ -66,7 +66,7 @@ const base = EditorView.theme({
   "&.cm-focused": { outline: "none" },
   ".cm-scroller": { fontFamily: "inherit", lineHeight: "1.7" },
   // 水平 padding 放在 line 而非 content,否則選取範圍的左緣會與文字錯位
-  ".cm-content": { padding: "1rem 0" },
+  ".cm-content": { padding: "1rem 0", minWidth: "0" },
   ".cm-line": { padding: "0 1rem" },
   ".cm-gutters": {
     backgroundColor: "transparent",
@@ -110,6 +110,21 @@ const base = EditorView.theme({
   },
   ".cm-code-block": { backgroundColor: "hsl(var(--muted))" },
   ".cm-task-checkbox": { margin: "0 0.25rem 0 0", verticalAlign: "middle" },
+  ".cm-table": {
+    overflowX: "auto",
+    margin: "0.5rem 1rem",
+    cursor: "text",
+    whiteSpace: "normal",
+    contain: "inline-size",
+  },
+  ".cm-table table": { borderCollapse: "collapse", width: "max-content" },
+  ".cm-table th, .cm-table td": {
+    border: "1px solid hsl(var(--border))",
+    padding: "0.25rem 0.5rem",
+    maxWidth: "24rem",
+    lineHeight: "1.5",
+  },
+  ".cm-table th": { backgroundColor: "hsl(var(--muted))" },
   ".cm-image": { display: "block", maxWidth: "100%", margin: "0.5rem 0" },
 });
 

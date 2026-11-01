@@ -11,6 +11,7 @@ import { codeBackground } from "./codebackground";
 import { imageSupport } from "./image";
 import { codeLanguages } from "./languages";
 import { urlLinks } from "./links";
+import { tableWidgets } from "./table";
 import { taskCheckboxes } from "./task";
 import { faintMarks, theme } from "./theme";
 import { type NoteLookup, wikilinkCompletion, wikilinks } from "./wikilink";
@@ -40,5 +41,6 @@ export function createExtensions(options: Options): Extension[] {
     urlLinks(),
     codeBackground(),
     imageSupport(options.onError),
+    tableWidgets(),
   ];
 }
