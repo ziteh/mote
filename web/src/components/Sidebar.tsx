@@ -1,6 +1,5 @@
 import { A } from "@solidjs/router";
 import { createSignal, For, Show } from "solid-js";
-import { toast } from "solid-sonner";
 import { api, unwrap } from "~/api/client";
 import {
   useNotebooks,
@@ -13,6 +12,7 @@ import PlusIcon from "~/assets/plus.svg";
 import SettingsIcon from "~/assets/settings.svg";
 import SunIcon from "~/assets/sun.svg";
 import TrashIcon from "~/assets/trash.svg";
+import { reportError } from "~/lib/error";
 import { useFilters } from "~/lib/filters";
 import { t } from "~/lib/i18n";
 import { DEFAULT_NOTEBOOK } from "~/lib/note";
@@ -74,7 +74,7 @@ export default function Sidebar(props: { onPick?: () => void }) {
       await action();
       await refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 

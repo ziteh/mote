@@ -4,6 +4,7 @@ import { createSignal, For, Show } from "solid-js";
 import { toast } from "solid-sonner";
 import { api, unwrap } from "~/api/client";
 import { useOrphanAssets, useRefreshNotes, useTrash } from "~/api/queries";
+import { reportError } from "~/lib/error";
 import { dateLocale, t } from "~/lib/i18n";
 import { noteTitle } from "~/lib/note";
 import {
@@ -13,10 +14,6 @@ import {
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { Button } from "./ui/button";
-
-function report(e: unknown) {
-  toast.error(e instanceof Error ? e.message : String(e));
-}
 
 export default function TrashPage() {
   const trash = useTrash();
@@ -42,7 +39,7 @@ export default function TrashPage() {
       await reload();
       navigate(`/n/${note.meta.id}`);
     } catch (e) {
-      report(e);
+      reportError(e);
     }
   };
 
@@ -53,7 +50,7 @@ export default function TrashPage() {
       );
       await reload();
     } catch (e) {
-      report(e);
+      reportError(e);
     }
   };
 
@@ -63,7 +60,7 @@ export default function TrashPage() {
       await unwrap(api.DELETE("/api/trash"));
       await reload();
     } catch (e) {
-      report(e);
+      reportError(e);
     }
   };
 
@@ -73,7 +70,7 @@ export default function TrashPage() {
       toast.success(t("orphansTrashed", { count }));
       await reload();
     } catch (e) {
-      report(e);
+      reportError(e);
     }
   };
 

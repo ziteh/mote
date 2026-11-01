@@ -1,6 +1,7 @@
 import { EditorState, type Extension } from "@codemirror/state";
 import { EditorView } from "@codemirror/view";
 import { api, type Note, unwrap } from "~/api/client";
+import { errorMessage } from "~/lib/error";
 
 export type SaveStatus = "saved" | "dirty" | "saving" | "conflict" | "error";
 
@@ -176,7 +177,7 @@ export class EditorSession {
     } catch (e) {
       entry.saving = false;
       entry.failed = true;
-      this.hooks.onError(e instanceof Error ? e.message : String(e));
+      this.hooks.onError(errorMessage(e));
       this.schedule(id, RETRY_DELAY_MS);
     }
 

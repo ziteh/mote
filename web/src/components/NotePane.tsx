@@ -34,6 +34,7 @@ import { createExtensions } from "~/editor/extensions";
 import { EditorSession, type SaveStatus } from "~/editor/session";
 import { lookupChanged } from "~/editor/wikilink";
 import { setSplit, split } from "~/lib/editor-mode";
+import { reportError } from "~/lib/error";
 import { type MessageKey, t } from "~/lib/i18n";
 import { deletedId, formatDateFull, noteTitle } from "~/lib/note";
 import MarkdownPreview from "./MarkdownPreview";
@@ -187,7 +188,7 @@ export default function NotePane(props: Props) {
       if (choice === "discard") await session.discard(id);
       else await session.save(id, { force: true });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 
@@ -207,7 +208,7 @@ export default function NotePane(props: Props) {
         session.replaceDoc(res.body);
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 

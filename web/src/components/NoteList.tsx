@@ -2,7 +2,6 @@ import * as SelectPrimitive from "@kobalte/core/select";
 import { A, useNavigate } from "@solidjs/router";
 import { useQueryClient } from "@tanstack/solid-query";
 import { createEffect, createSignal, For, on, Show } from "solid-js";
-import { toast } from "solid-sonner";
 import type { NoteMeta } from "~/api/client";
 import { api, unwrap } from "~/api/client";
 import {
@@ -15,6 +14,7 @@ import MagnifyingGlassIcon from "~/assets/magnifying-glass.svg";
 import PlusIcon from "~/assets/plus.svg";
 import SortIcon from "~/assets/sort.svg";
 import { wikilinkText } from "~/editor/wikilink";
+import { reportError } from "~/lib/error";
 import { useFilters } from "~/lib/filters";
 import { type MessageKey, t } from "~/lib/i18n";
 import { formatDate, noteTitle, setDeletedId } from "~/lib/note";
@@ -106,7 +106,7 @@ export default function NoteList(props: Props) {
       await refresh();
       navigate(`/n/${created.meta.id}${location.search}`);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 
@@ -115,7 +115,7 @@ export default function NoteList(props: Props) {
       await unwrap(api.POST("/api/system/duplicates/dismiss"));
       await client.invalidateQueries({ queryKey: ["status"] });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 
@@ -130,7 +130,7 @@ export default function NoteList(props: Props) {
       client.setQueryData(["note", id], moved);
       await refresh();
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 
@@ -144,7 +144,7 @@ export default function NoteList(props: Props) {
         navigate(`/${location.search}`, { replace: true });
       }
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 
@@ -157,7 +157,7 @@ export default function NoteList(props: Props) {
       if (links.length > 0) setPendingDelete({ id, backlinks: links.length });
       else await remove(id);
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
 
@@ -340,7 +340,7 @@ function NoteRow(props: {
     try {
       await navigator.clipboard.writeText(wikilinkText(props.note));
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : String(e));
+      reportError(e);
     }
   };
   return (

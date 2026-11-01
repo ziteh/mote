@@ -7,6 +7,7 @@ import {
 } from "@codemirror/state";
 import { Decoration, EditorView, WidgetType } from "@codemirror/view";
 import { uploadAsset } from "~/api/client";
+import { errorMessage } from "~/lib/error";
 
 const ASSET_PATH = /^\.\.\/\.assets\/([0-9a-f]+\.[a-z]+)$/;
 
@@ -83,7 +84,7 @@ async function insertImages(
       });
       at = null;
     } catch (e) {
-      onError(e instanceof Error ? e.message : String(e));
+      onError(errorMessage(e));
     }
   }
 }
