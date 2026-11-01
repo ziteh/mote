@@ -1019,7 +1019,7 @@ dependencies = [
 
 [[package]]
 name = "mote-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "anyhow",
  "blake3",
@@ -1037,7 +1037,7 @@ dependencies = [
 
 [[package]]
 name = "mote-server"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "anyhow",
  "axum",
