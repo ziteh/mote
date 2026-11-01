@@ -46,6 +46,48 @@ tags:
   - <tag>
 ```
 
+## Docker
+
+The image contains only the static binary, so it has no shell.
+
+```sh
+docker run -d --name web-note \
+  -p 5393:5393 \
+  -e BIND=0.0.0.0 \
+  -e NOTES_DIR=/data/notes \
+  -v ./Notes:/data/notes \
+  ghcr.io/ziteh/web-note:<version>
+```
+
+Or with Compose:
+
+```yaml
+services:
+  web-note:
+    image: ghcr.io/ziteh/web-note:<version>
+    restart: unless-stopped
+    user: "1000:1000" # Match the owner of the notes directory
+    ports:
+      - "5393:5393"
+    environment:
+      BIND: 0.0.0.0 # The default loopback is unreachable from outside the container
+      NOTES_DIR: /data/notes
+      CACHE_DIR: /data/cache # Optional, defaults to .cache inside the notes directory
+    volumes:
+      - ./Notes:/data/notes
+      - cache:/data/cache
+
+volumes:
+  cache:
+```
+
+```sh
+docker compose up -d
+docker compose pull && docker compose up -d # Upgrade after changing the tag
+```
+
+There is no authentication. Do not expose the port to untrusted networks; bind it to loopback (`127.0.0.1:5393:5393`) or put it behind an authenticating reverse proxy.
+
 ## Development
 
 ```sh
