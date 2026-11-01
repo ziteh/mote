@@ -17,6 +17,7 @@ import {
   WidgetType,
 } from "@codemirror/view";
 import type { NoteMeta } from "~/api/client";
+import noteIcon from "~/assets/note.svg?raw";
 import { formatDate, noteTitle } from "~/lib/note";
 import { inCode } from "./syntax";
 
@@ -28,6 +29,7 @@ export interface NoteLookup {
 /** Dispatch when the lookup's contents changed so titles are redrawn. */
 export const lookupChanged = StateEffect.define<null>();
 
+const ICON_MASK = `url("data:image/svg+xml,${encodeURIComponent(noteIcon)}")`;
 const WIKILINK = /\[\[([0-9a-z]+)(?:\|([^[\]\n]*))?\]\]/g;
 const UNSAFE_ALIAS = /[[\]|\n]/g;
 
@@ -56,7 +58,11 @@ class WikiLinkWidget extends WidgetType {
     el.className = this.broken
       ? "cm-wikilink cm-wikilink-broken"
       : "cm-wikilink";
-    el.textContent = this.text;
+    const icon = document.createElement("span");
+    icon.className = "cm-wikilink-icon";
+    icon.style.maskImage = ICON_MASK;
+    el.append(icon);
+    el.append(this.text);
     el.dataset.noteId = this.id;
     return el;
   }

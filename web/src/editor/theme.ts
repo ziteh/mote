@@ -89,6 +89,16 @@ const base = EditorView.theme({
     textDecoration: "underline",
     cursor: "pointer",
   },
+  ".cm-wikilink-icon": {
+    display: "inline-block",
+    width: "1em",
+    height: "1em",
+    marginRight: "0.2em",
+    verticalAlign: "-0.15em",
+    backgroundColor: "currentColor",
+    maskSize: "contain",
+    maskRepeat: "no-repeat",
+  },
   ".cm-wikilink-broken": {
     color: "hsl(var(--destructive))",
     textDecoration: "line-through",
