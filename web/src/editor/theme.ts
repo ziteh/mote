@@ -84,6 +84,11 @@ const base = EditorView.theme({
     textDecoration: "underline",
     cursor: "pointer",
   },
+  ".cm-url": {
+    color: "hsl(var(--primary))",
+    textDecoration: "underline",
+    cursor: "pointer",
+  },
   ".cm-wikilink-broken": {
     color: "hsl(var(--destructive))",
     textDecoration: "line-through",

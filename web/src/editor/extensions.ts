@@ -10,6 +10,7 @@ import {
 import { codeBackground } from "./codebackground";
 import { imageSupport } from "./image";
 import { codeLanguages } from "./languages";
+import { urlLinks } from "./links";
 import { taskCheckboxes } from "./task";
 import { faintMarks, theme } from "./theme";
 import { type NoteLookup, wikilinkCompletion, wikilinks } from "./wikilink";
@@ -36,6 +37,7 @@ export function createExtensions(options: Options): Extension[] {
     wikilinks(options.lookup, options.onOpenNote),
     wikilinkCompletion(options.lookup),
     taskCheckboxes(),
+    urlLinks(),
     codeBackground(),
     imageSupport(options.onError),
   ];
