@@ -11,6 +11,6 @@ pre-commit:
       run: cargo clippy --all-targets --all-features -- -D warnings
 
     biomde:
-      run: pnpx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
+      run: web/node_modules/.bin/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       glob: "*.{js,ts,cjs,mjs,d.cts,d.mts,jsx,tsx,json,jsonc,css}"
       stage_fixed: true
