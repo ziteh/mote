@@ -6,6 +6,9 @@ A simple web-based Markdown note-taking app. `.md` is the single source of truth
 - Wikilink
 - Backlinks
 
+> [!NOTE]
+> This repo contains LLM-assisted code; please review and validate it as appropriate.
+
 ## Usage
 
 ```sh
