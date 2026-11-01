@@ -10,7 +10,7 @@ use crate::{
 };
 
 pub fn read_document(path: &Path) -> Result<Document> {
-    let text = fs::read_to_string(path).map_err(|e| io_err(path, e))?;
+    let text = fs::read_to_string(path).map_err(|e| Error::io(path, e))?;
     Document::parse(&text)
 }
 
@@ -29,15 +29,8 @@ pub fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     };
     write().map_err(|e| {
         let _ = fs::remove_file(&tmp);
-        io_err(path, e)
+        Error::io(path, e)
     })
-}
-
-fn io_err(path: &Path, source: std::io::Error) -> Error {
-    Error::Io {
-        path: path.to_path_buf(),
-        source,
-    }
 }
 
 #[cfg(test)]

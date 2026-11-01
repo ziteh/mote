@@ -1,6 +1,6 @@
 use std::fs;
 
-use super::{ASSETS_DIR, Notes, TRASH_DIR, io_err};
+use super::{ASSETS_DIR, Notes, TRASH_DIR};
 use crate::{
     error::{Error, Result},
     index,
@@ -62,13 +62,13 @@ impl Notes {
     pub fn orphan_assets(&self) -> Result<Vec<String>> {
         let mut texts = index::bodies(&self.conn())?;
         for (_, path) in self.trash_files()? {
-            texts.push(fs::read_to_string(&path).map_err(|e| io_err(&path, e))?);
+            texts.push(fs::read_to_string(&path).map_err(|e| Error::io(&path, e))?);
         }
 
         let dir = self.root.join(ASSETS_DIR);
         let mut orphans = Vec::new();
-        for entry in fs::read_dir(&dir).map_err(|e| io_err(&dir, e))? {
-            let name = entry.map_err(|e| io_err(&dir, e))?.file_name();
+        for entry in fs::read_dir(&dir).map_err(|e| Error::io(&dir, e))? {
+            let name = entry.map_err(|e| Error::io(&dir, e))?.file_name();
             let name = name.to_string_lossy().into_owned();
             if !texts.iter().any(|t| t.contains(&name)) {
                 orphans.push(name);
@@ -82,11 +82,11 @@ impl Notes {
     pub fn trash_orphan_assets(&self) -> Result<usize> {
         let orphans = self.orphan_assets()?;
         let target_dir = self.root.join(TRASH_DIR).join(ASSETS_DIR);
-        fs::create_dir_all(&target_dir).map_err(|e| io_err(&target_dir, e))?;
+        fs::create_dir_all(&target_dir).map_err(|e| Error::io(&target_dir, e))?;
         for name in &orphans {
             let target = target_dir.join(name);
             fs::rename(self.root.join(ASSETS_DIR).join(name), &target)
-                .map_err(|e| io_err(&target, e))?;
+                .map_err(|e| Error::io(&target, e))?;
         }
         Ok(orphans.len())
     }
@@ -106,7 +106,7 @@ impl Notes {
         match fs::read(&path) {
             Ok(bytes) => Ok((bytes, content_type)),
             Err(e) if e.kind() == std::io::ErrorKind::NotFound => Err(Error::AssetNotFound),
-            Err(e) => Err(io_err(&path, e)),
+            Err(e) => Err(Error::io(&path, e)),
         }
     }
 }

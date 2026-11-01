@@ -61,7 +61,7 @@ impl Notes {
             root.join(TRASH_DIR),
             cache_dir.clone(),
         ] {
-            fs::create_dir_all(&dir).map_err(|e| io_err(&dir, e))?;
+            fs::create_dir_all(&dir).map_err(|e| Error::io(&dir, e))?;
         }
         let conn = index::open(&cache_dir.join(DB_FILE))?;
         let notes = Self {
@@ -134,7 +134,7 @@ impl Notes {
         let mut conn = self.conn();
         let rel = self.locate(&mut conn, id)?;
         let abs = self.root.join(&rel);
-        let text = fs::read_to_string(&abs).map_err(|e| io_err(&abs, e))?;
+        let text = fs::read_to_string(&abs).map_err(|e| Error::io(&abs, e))?;
 
         if version_of(&text) != base_version {
             if !force {
@@ -164,7 +164,7 @@ impl Notes {
         let new_rel = format!("{notebook}/{name}");
         if new_rel != rel {
             let new_abs = self.root.join(&new_rel);
-            fs::rename(self.root.join(&rel), &new_abs).map_err(|e| io_err(&new_abs, e))?;
+            fs::rename(self.root.join(&rel), &new_abs).map_err(|e| Error::io(&new_abs, e))?;
             let doc = read_document(&new_abs)?;
             index::upsert(&conn, &new_rel, id, &doc, index::stat_of(&new_abs)?)?;
         }
@@ -241,7 +241,7 @@ impl Notes {
     fn load(&self, conn: &mut Connection, id: &str) -> Result<Note> {
         let rel = self.locate(conn, id)?;
         let abs = self.root.join(&rel);
-        let text = fs::read_to_string(&abs).map_err(|e| io_err(&abs, e))?;
+        let text = fs::read_to_string(&abs).map_err(|e| Error::io(&abs, e))?;
         let doc = Document::parse(&text)?;
         let meta = index::get(conn, id)?.ok_or(Error::NoteNotFound)?;
         Ok(Note {
@@ -266,13 +266,6 @@ impl Notes {
 
 fn version_of(text: &str) -> String {
     blake3::hash(text.as_bytes()).to_hex()[..VERSION_CHARS].to_string()
-}
-
-fn io_err(path: &Path, source: std::io::Error) -> Error {
-    Error::Io {
-        path: path.to_path_buf(),
-        source,
-    }
 }
 
 #[cfg(test)]

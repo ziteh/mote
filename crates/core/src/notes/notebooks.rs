@@ -2,7 +2,7 @@ use std::{fs, path::Path};
 
 use unicode_normalization::UnicodeNormalization;
 
-use super::{DEFAULT_NOTEBOOK, Notes, io_err};
+use super::{DEFAULT_NOTEBOOK, Notes};
 use crate::{
     error::{Error, Result},
     index,
@@ -14,8 +14,8 @@ impl Notes {
         let counts: std::collections::HashMap<String, i64> =
             index::notebook_counts(&self.conn())?.into_iter().collect();
         let mut out = Vec::new();
-        for entry in fs::read_dir(&self.root).map_err(|e| io_err(&self.root, e))? {
-            let entry = entry.map_err(|e| io_err(&self.root, e))?;
+        for entry in fs::read_dir(&self.root).map_err(|e| Error::io(&self.root, e))? {
+            let entry = entry.map_err(|e| Error::io(&self.root, e))?;
             let name = entry.file_name().to_string_lossy().into_owned();
             if !name.starts_with('.') && entry.path().is_dir() {
                 let count = counts.get(&name).copied().unwrap_or(0);
@@ -32,7 +32,7 @@ impl Notes {
         if dir.exists() {
             return Err(Error::NotebookExists);
         }
-        fs::create_dir(&dir).map_err(|e| io_err(&dir, e))
+        fs::create_dir(&dir).map_err(|e| Error::io(&dir, e))
     }
 
     pub fn rename_notebook(&self, name: &str, new_name: &str) -> Result<()> {
@@ -45,7 +45,7 @@ impl Notes {
         if new_dir.exists() {
             return Err(Error::NotebookExists);
         }
-        fs::rename(self.root.join(&name), &new_dir).map_err(|e| io_err(&new_dir, e))?;
+        fs::rename(self.root.join(&name), &new_dir).map_err(|e| Error::io(&new_dir, e))?;
         let mut conn = self.conn();
         self.reconcile(&mut conn)
     }
@@ -60,7 +60,7 @@ impl Notes {
         if has_notes(&dir)? {
             return Err(Error::NotebookNotEmpty);
         }
-        fs::remove_dir(&dir).map_err(|e| io_err(&dir, e))
+        fs::remove_dir(&dir).map_err(|e| Error::io(&dir, e))
     }
 
     /// Normalized name of a notebook that exists on disk.
@@ -75,8 +75,8 @@ impl Notes {
 }
 
 fn has_notes(dir: &Path) -> Result<bool> {
-    for entry in fs::read_dir(dir).map_err(|e| io_err(dir, e))? {
-        let path = entry.map_err(|e| io_err(dir, e))?.path();
+    for entry in fs::read_dir(dir).map_err(|e| Error::io(dir, e))? {
+        let path = entry.map_err(|e| Error::io(dir, e))?.path();
         if path.extension().is_some_and(|x| x == "md") {
             return Ok(true);
         }

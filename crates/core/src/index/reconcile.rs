@@ -182,19 +182,15 @@ fn load_known(conn: &Connection) -> Result<HashMap<String, Known>> {
 /// Every `<root>/<notebook>/*.md`, skipping dot-directories such as assets,
 /// trash and cache. Returns (relative path, absolute path, stat).
 fn scan(root: &Path) -> Result<Vec<(String, PathBuf, FileStat)>> {
-    let io = |path: &Path, source| Error::Io {
-        path: path.to_path_buf(),
-        source,
-    };
     let mut files = Vec::new();
-    for nb in fs::read_dir(root).map_err(|e| io(root, e))? {
-        let nb = nb.map_err(|e| io(root, e))?;
+    for nb in fs::read_dir(root).map_err(|e| Error::io(root, e))? {
+        let nb = nb.map_err(|e| Error::io(root, e))?;
         let nb_name = nb.file_name().to_string_lossy().into_owned();
         if nb_name.starts_with('.') || !nb.path().is_dir() {
             continue;
         }
-        for f in fs::read_dir(nb.path()).map_err(|e| io(&nb.path(), e))? {
-            let path = f.map_err(|e| io(&nb.path(), e))?.path();
+        for f in fs::read_dir(nb.path()).map_err(|e| Error::io(&nb.path(), e))? {
+            let path = f.map_err(|e| Error::io(&nb.path(), e))?.path();
             if path.extension().is_some_and(|x| x == "md") && path.is_file() {
                 let name = path.file_name().unwrap_or_default().to_string_lossy();
                 let rel = format!("{nb_name}/{name}");
@@ -207,10 +203,7 @@ fn scan(root: &Path) -> Result<Vec<(String, PathBuf, FileStat)>> {
 }
 
 pub(crate) fn stat_of(path: &Path) -> Result<FileStat> {
-    let meta = fs::metadata(path).map_err(|source| Error::Io {
-        path: path.to_path_buf(),
-        source,
-    })?;
+    let meta = fs::metadata(path).map_err(|e| Error::io(path, e))?;
     let mtime = meta
         .modified()
         .ok()

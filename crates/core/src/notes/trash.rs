@@ -4,7 +4,7 @@ use std::{
     time::{SystemTime, UNIX_EPOCH},
 };
 
-use super::{Note, Notes, TRASH_DIR, io_err};
+use super::{Note, Notes, TRASH_DIR};
 use crate::{
     error::{Error, Result},
     id, index, parse,
@@ -30,7 +30,7 @@ impl Notes {
         let mut conn = self.conn();
         let rel = self.locate(&mut conn, id)?;
         let target = self.trash_target(&rel)?;
-        fs::rename(self.root.join(&rel), &target).map_err(|e| io_err(&target, e))?;
+        fs::rename(self.root.join(&rel), &target).map_err(|e| Error::io(&target, e))?;
         index::remove(&conn, id)
     }
 
@@ -61,7 +61,7 @@ impl Notes {
         let (notebook, path) = self.find_trashed(key)?;
         let mut doc = read_document(&path)?;
         let dir = self.root.join(&notebook);
-        fs::create_dir_all(&dir).map_err(|e| io_err(&dir, e))?;
+        fs::create_dir_all(&dir).map_err(|e| Error::io(&dir, e))?;
 
         let mut conn = self.conn();
         let original = format!("{}.md", original_stem(key));
@@ -78,18 +78,18 @@ impl Notes {
 
         let rel = format!("{notebook}/{name}");
         self.write_and_index(&conn, &rel, &id, &doc)?;
-        fs::remove_file(&path).map_err(|e| io_err(&path, e))?;
+        fs::remove_file(&path).map_err(|e| Error::io(&path, e))?;
         self.load(&mut conn, &id)
     }
 
     pub fn purge(&self, key: &str) -> Result<()> {
         let (_, path) = self.find_trashed(key)?;
-        fs::remove_file(&path).map_err(|e| io_err(&path, e))
+        fs::remove_file(&path).map_err(|e| Error::io(&path, e))
     }
 
     pub fn empty_trash(&self) -> Result<()> {
         for (_, path) in self.trash_files()? {
-            fs::remove_file(&path).map_err(|e| io_err(&path, e))?;
+            fs::remove_file(&path).map_err(|e| Error::io(&path, e))?;
         }
         Ok(())
     }
@@ -97,14 +97,14 @@ impl Notes {
     /// Keeps a copy of `text`, the content of the note at `rel`, in the trash.
     pub(super) fn trash_copy(&self, rel: &str, text: &str) -> Result<()> {
         let target = self.trash_target(rel)?;
-        fs::write(&target, text).map_err(|e| io_err(&target, e))
+        fs::write(&target, text).map_err(|e| Error::io(&target, e))
     }
 
     fn trash_target(&self, rel: &str) -> Result<PathBuf> {
         let (notebook, name) = rel.split_once('/').unwrap_or_default();
         let stem = name.strip_suffix(".md").unwrap_or(name);
         let dir = self.root.join(TRASH_DIR).join(notebook);
-        fs::create_dir_all(&dir).map_err(|e| io_err(&dir, e))?;
+        fs::create_dir_all(&dir).map_err(|e| Error::io(&dir, e))?;
         let millis = SystemTime::now()
             .duration_since(UNIX_EPOCH)
             .map_or(0, |d| d.as_millis());
@@ -115,14 +115,14 @@ impl Notes {
     pub(super) fn trash_files(&self) -> Result<Vec<(String, PathBuf)>> {
         let trash = self.root.join(TRASH_DIR);
         let mut files = Vec::new();
-        for nb in fs::read_dir(&trash).map_err(|e| io_err(&trash, e))? {
-            let nb = nb.map_err(|e| io_err(&trash, e))?;
+        for nb in fs::read_dir(&trash).map_err(|e| Error::io(&trash, e))? {
+            let nb = nb.map_err(|e| Error::io(&trash, e))?;
             if nb.file_name().to_string_lossy().starts_with('.') || !nb.path().is_dir() {
                 continue;
             }
             let notebook = nb.file_name().to_string_lossy().into_owned();
-            for f in fs::read_dir(nb.path()).map_err(|e| io_err(&nb.path(), e))? {
-                let path = f.map_err(|e| io_err(&nb.path(), e))?.path();
+            for f in fs::read_dir(nb.path()).map_err(|e| Error::io(&nb.path(), e))? {
+                let path = f.map_err(|e| Error::io(&nb.path(), e))?.path();
                 if path.extension().is_some_and(|x| x == "md") {
                     files.push((notebook.clone(), path));
                 }
