@@ -79,6 +79,7 @@ export default function NotePane(props: Props) {
   );
 
   let host!: HTMLDivElement;
+  let preview: HTMLDivElement | undefined;
   let session: EditorSession | undefined;
 
   const saved = (saved: Note) => {
@@ -142,6 +143,36 @@ export default function NotePane(props: Props) {
   createEffect(() => {
     byId();
     session?.editorView.dispatch({ effects: lookupChanged.of(null) });
+  });
+
+  createEffect(() => {
+    if (!split() || !preview) return;
+    const editor = session?.editorView.scrollDOM;
+    const pane = preview;
+    if (!editor) return;
+    // The element that is not being scrolled by the user follows it.
+    let leader: HTMLElement | undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const follow = (from: HTMLElement, to: HTMLElement) => () => {
+      if (leader && leader !== from) return;
+      leader = from;
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        leader = undefined;
+      }, 100);
+      const range = from.scrollHeight - from.clientHeight;
+      const ratio = range > 0 ? from.scrollTop / range : 0;
+      to.scrollTop = ratio * (to.scrollHeight - to.clientHeight);
+    };
+    const fromEditor = follow(editor, pane);
+    const fromPane = follow(pane, editor);
+    editor.addEventListener("scroll", fromEditor);
+    pane.addEventListener("scroll", fromPane);
+    onCleanup(() => {
+      editor.removeEventListener("scroll", fromEditor);
+      pane.removeEventListener("scroll", fromPane);
+      clearTimeout(timer);
+    });
   });
 
   createEffect(() => {
@@ -327,7 +358,7 @@ export default function NotePane(props: Props) {
       >
         <div ref={host} class="min-h-0 min-w-0 flex-1 overflow-hidden" />
         <Show when={split()}>
-          <div class="min-w-0 flex-1 overflow-auto border-l p-4">
+          <div ref={preview} class="min-w-0 flex-1 overflow-auto border-l p-4">
             <MarkdownPreview body={body()} />
           </div>
         </Show>

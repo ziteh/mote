@@ -69,8 +69,8 @@ function PanelToggles() {
 
   const toggle = (index: number) =>
     resizable.sizes()[index] === 0
-      ? resizable.expand(index)
-      : resizable.collapse(index);
+      ? resizable.expand(index, "following")
+      : resizable.collapse(index, "following");
 
   return (
     <div class="flex w-9 shrink-0 flex-col items-center gap-1 border-r py-2">
