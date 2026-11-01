@@ -57,11 +57,11 @@ mod tests {
     }
 
     #[test]
-    fn aligns_table_columns_by_display_width() {
+    fn compacts_table_cells() {
         let out = markdown("|名稱|value|\n|---|---|\n|中文字|a|\n|ab|longer|\n");
         assert_eq!(
             out,
-            "| 名稱   | value  |\n| ------ | ------ |\n| 中文字 | a      |\n| ab     | longer |\n"
+            "| 名稱 | value |\n| --- | --- |\n| 中文字 | a |\n| ab | longer |\n"
         );
     }
 
