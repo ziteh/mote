@@ -1,7 +1,7 @@
 use std::{
     fs::{self, File},
     io::Write,
-    path::Path,
+    path::{Path, PathBuf},
 };
 
 use crate::{
@@ -16,6 +16,32 @@ pub fn read_document(path: &Path) -> Result<Document> {
 
 pub fn write_document(path: &Path, doc: &Document) -> Result<()> {
     atomic_write(path, doc.render()?.as_bytes())
+}
+
+/// Non-hidden subdirectories of `dir`, as (name, path).
+pub(crate) fn subdirs(dir: &Path) -> Result<Vec<(String, PathBuf)>> {
+    let mut dirs = Vec::new();
+    for entry in fs::read_dir(dir).map_err(|e| Error::io(dir, e))? {
+        let entry = entry.map_err(|e| Error::io(dir, e))?;
+        let name = entry.file_name().to_string_lossy().into_owned();
+        let path = entry.path();
+        if !name.starts_with('.') && path.is_dir() {
+            dirs.push((name, path));
+        }
+    }
+    Ok(dirs)
+}
+
+/// Markdown files directly inside `dir`.
+pub(crate) fn md_files(dir: &Path) -> Result<Vec<PathBuf>> {
+    let mut files = Vec::new();
+    for entry in fs::read_dir(dir).map_err(|e| Error::io(dir, e))? {
+        let path = entry.map_err(|e| Error::io(dir, e))?.path();
+        if path.extension().is_some_and(|x| x == "md") && path.is_file() {
+            files.push(path);
+        }
+    }
+    Ok(files)
 }
 
 /// Writes to a temp file in the same directory, then renames over `path`.

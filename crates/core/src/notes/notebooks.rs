@@ -6,6 +6,7 @@ use super::{DEFAULT_NOTEBOOK, Notes};
 use crate::{
     error::{Error, Result},
     index,
+    store::{md_files, subdirs},
 };
 
 impl Notes {
@@ -13,15 +14,13 @@ impl Notes {
     pub fn notebooks(&self) -> Result<Vec<(String, i64)>> {
         let counts: std::collections::HashMap<String, i64> =
             index::notebook_counts(&self.conn())?.into_iter().collect();
-        let mut out = Vec::new();
-        for entry in fs::read_dir(&self.root).map_err(|e| Error::io(&self.root, e))? {
-            let entry = entry.map_err(|e| Error::io(&self.root, e))?;
-            let name = entry.file_name().to_string_lossy().into_owned();
-            if !name.starts_with('.') && entry.path().is_dir() {
+        let mut out: Vec<_> = subdirs(&self.root)?
+            .into_iter()
+            .map(|(name, _)| {
                 let count = counts.get(&name).copied().unwrap_or(0);
-                out.push((name, count));
-            }
-        }
+                (name, count)
+            })
+            .collect();
         out.sort();
         Ok(out)
     }
@@ -75,13 +74,7 @@ impl Notes {
 }
 
 fn has_notes(dir: &Path) -> Result<bool> {
-    for entry in fs::read_dir(dir).map_err(|e| Error::io(dir, e))? {
-        let path = entry.map_err(|e| Error::io(dir, e))?.path();
-        if path.extension().is_some_and(|x| x == "md") {
-            return Ok(true);
-        }
-    }
-    Ok(false)
+    Ok(!md_files(dir)?.is_empty())
 }
 
 fn validate_name(name: &str) -> Result<String> {

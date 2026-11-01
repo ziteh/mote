@@ -8,7 +8,7 @@ use super::{Note, Notes, TRASH_DIR};
 use crate::{
     error::{Error, Result},
     id, index, parse,
-    store::read_document,
+    store::{md_files, read_document, subdirs},
 };
 
 /// Trashed files live at `.trash/<notebook>/<stem>~<millis>.md`.
@@ -115,17 +115,9 @@ impl Notes {
     pub(super) fn trash_files(&self) -> Result<Vec<(String, PathBuf)>> {
         let trash = self.root.join(TRASH_DIR);
         let mut files = Vec::new();
-        for nb in fs::read_dir(&trash).map_err(|e| Error::io(&trash, e))? {
-            let nb = nb.map_err(|e| Error::io(&trash, e))?;
-            if nb.file_name().to_string_lossy().starts_with('.') || !nb.path().is_dir() {
-                continue;
-            }
-            let notebook = nb.file_name().to_string_lossy().into_owned();
-            for f in fs::read_dir(nb.path()).map_err(|e| Error::io(&nb.path(), e))? {
-                let path = f.map_err(|e| Error::io(&nb.path(), e))?.path();
-                if path.extension().is_some_and(|x| x == "md") {
-                    files.push((notebook.clone(), path));
-                }
+        for (notebook, dir) in subdirs(&trash)? {
+            for path in md_files(&dir)? {
+                files.push((notebook.clone(), path));
             }
         }
         Ok(files)
