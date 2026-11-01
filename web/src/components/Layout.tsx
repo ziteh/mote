@@ -7,6 +7,7 @@ import SidebarIcon from "~/assets/sidebar.svg";
 import { useFilters } from "~/lib/filters";
 import { t } from "~/lib/i18n";
 import { createIsDesktop } from "~/lib/media";
+import { panelSizes, setPanelSizes } from "~/lib/panel-sizes";
 import NoteList from "./NoteList";
 import NotePane from "./NotePane";
 import Sidebar from "./Sidebar";
@@ -31,7 +32,7 @@ export default function Layout() {
   return (
     <div class="h-full">
       <Show when={isDesktop()} fallback={<MobileLayout id={params.id} />}>
-        <Resizable>
+        <Resizable sizes={panelSizes()} onSizesChange={setPanelSizes}>
           <PanelToggles />
           <ResizablePanel
             class="overflow-hidden"
