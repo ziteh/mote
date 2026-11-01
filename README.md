@@ -1,6 +1,6 @@
 # Web Note
 
-A simple web-based Markdown note-taking app. `.md` is the single source of truth.
+A simple web-based Markdown note-taking app. `.md` is the single source of truth. [Demo](https://web-note.ziteh.dev)
 
 - Single executable, the frontend is embedded in the binary
 - Embedded image
