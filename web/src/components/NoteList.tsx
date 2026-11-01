@@ -14,6 +14,7 @@ import {
 import MagnifyingGlassIcon from "~/assets/magnifying-glass.svg";
 import PlusIcon from "~/assets/plus.svg";
 import SortIcon from "~/assets/sort.svg";
+import { wikilinkText } from "~/editor/wikilink";
 import { useFilters } from "~/lib/filters";
 import { type MessageKey, t } from "~/lib/i18n";
 import { formatDate, noteTitle, setDeletedId } from "~/lib/note";
@@ -335,6 +336,13 @@ function NoteRow(props: {
 }) {
   const notebooks = useNotebooks();
   const href = () => `/n/${props.note.id}${location.search}`;
+  const copyWikilink = async () => {
+    try {
+      await navigator.clipboard.writeText(wikilinkText(props.note));
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : String(e));
+    }
+  };
   return (
     <ContextMenu>
       <ContextMenuTrigger as="li" class="border-b">
@@ -387,6 +395,9 @@ function NoteRow(props: {
         </A>
       </ContextMenuTrigger>
       <ContextMenuContent>
+        <ContextMenuItem onSelect={copyWikilink}>
+          {t("copyWikilink")}
+        </ContextMenuItem>
         <ContextMenuSub>
           <ContextMenuSubTrigger>{t("moveToNotebook")}</ContextMenuSubTrigger>
           <ContextMenuSubContent>

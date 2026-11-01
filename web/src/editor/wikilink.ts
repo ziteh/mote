@@ -33,6 +33,10 @@ const ICON_MASK = `url("data:image/svg+xml,${encodeURIComponent(noteIcon)}")`;
 const WIKILINK = /\[\[([0-9a-z]+)(?:\|([^[\]\n]*))?\]\]/g;
 const UNSAFE_ALIAS = /[[\]|\n]/g;
 
+export function wikilinkText(note: NoteMeta) {
+  return `[[${note.id}|${noteTitle(note).replace(UNSAFE_ALIAS, " ")}]]`;
+}
+
 class WikiLinkWidget extends WidgetType {
   id: string;
   text: string;
@@ -156,8 +160,7 @@ export function wikilinkCompletion(lookup: NoteLookup): Extension {
               from: number,
               to: number,
             ) {
-              const alias = noteTitle(note).replace(UNSAFE_ALIAS, " ");
-              const link = `[[${note.id}|${alias}]]`;
+              const link = wikilinkText(note);
               const closing = view.state.sliceDoc(to, to + 2) === "]]" ? 2 : 0;
               view.dispatch({
                 changes: {

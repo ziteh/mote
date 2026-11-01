@@ -32,6 +32,7 @@ export default {
   deleteNote: "Delete note",
   deleteNoteConfirm:
     "{count} notes link to this note; those links will break after deletion. Deleted notes are moved to the trash.",
+  copyWikilink: "Copy as wikilink",
   moveToNotebook: "Move to notebook",
   statusSaved: "Saved",
   statusDirty: "Unsaved",

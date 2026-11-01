@@ -34,6 +34,7 @@ const zhHant: Record<keyof typeof en, string> = {
   deleteNote: "刪除筆記",
   deleteNoteConfirm:
     "有 {count} 則筆記連結到這則筆記，刪除後那些連結會變成失效連結。刪除的筆記會移到垃圾桶。",
+  copyWikilink: "複製為 wikilink",
   moveToNotebook: "移動到筆記本",
   statusSaved: "已儲存",
   statusDirty: "尚未儲存",
