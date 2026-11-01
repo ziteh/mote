@@ -161,6 +161,16 @@ export default function NoteList(props: Props) {
     }
   };
 
+  const row = (note: NoteMeta) => (
+    <NoteRow
+      note={note}
+      selected={note.id === props.selectedId}
+      onSelect={props.onSelect}
+      onMove={move}
+      onDelete={requestDelete}
+    />
+  );
+
   const sorted = () => sortNotes(notes.data ?? [], sort());
   const todos = () => sorted().filter((n) => n.todo);
   const openTodos = () => todos().filter((n) => !isDone(n));
@@ -239,17 +249,7 @@ export default function NoteList(props: Props) {
             </li>
           )}
         </For>
-        <For each={openTodos()}>
-          {(note) => (
-            <NoteRow
-              note={note}
-              selected={note.id === props.selectedId}
-              onSelect={props.onSelect}
-              onMove={move}
-              onDelete={requestDelete}
-            />
-          )}
-        </For>
+        <For each={openTodos()}>{row}</For>
         <Show when={doneTodos().length > 0}>
           <li class="border-b">
             <button
@@ -263,30 +263,10 @@ export default function NoteList(props: Props) {
             </button>
           </li>
           <Show when={showDone()}>
-            <For each={doneTodos()}>
-              {(note) => (
-                <NoteRow
-                  note={note}
-                  selected={note.id === props.selectedId}
-                  onSelect={props.onSelect}
-                  onMove={move}
-                  onDelete={requestDelete}
-                />
-              )}
-            </For>
+            <For each={doneTodos()}>{row}</For>
           </Show>
         </Show>
-        <For each={plain()}>
-          {(note) => (
-            <NoteRow
-              note={note}
-              selected={note.id === props.selectedId}
-              onSelect={props.onSelect}
-              onMove={move}
-              onDelete={requestDelete}
-            />
-          )}
-        </For>
+        <For each={plain()}>{row}</For>
         <Show when={notes.isSuccess && sorted().length === 0}>
           <li class="p-4 text-center text-sm text-muted-foreground">
             {t("noMatches")}
