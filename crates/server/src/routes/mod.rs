@@ -5,7 +5,7 @@ pub mod system;
 pub mod tags;
 pub mod trash;
 
-use web_note_core::{Notes, Result as CoreResult};
+use mote_core::{Notes, Result as CoreResult};
 
 use crate::{AppState, api_error::ApiError};
 

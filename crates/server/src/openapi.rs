@@ -4,7 +4,7 @@ use utoipa_axum::router::OpenApiRouter;
 use crate::{AppState, routes};
 
 #[derive(OpenApi)]
-#[openapi(info(title = "web-note", version = env!("CARGO_PKG_VERSION")))]
+#[openapi(info(title = "mote", version = env!("CARGO_PKG_VERSION")))]
 struct ApiDoc;
 
 pub fn router(asset_body_limit: usize) -> OpenApiRouter<AppState> {

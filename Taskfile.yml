@@ -3,7 +3,7 @@
 version: "3"
 
 vars:
-  APP: web-note-server
+  APP: mote-server
 
 silent: true
 tasks:

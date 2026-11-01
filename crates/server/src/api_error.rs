@@ -3,9 +3,9 @@ use axum::{
     http::StatusCode,
     response::{IntoResponse, Response},
 };
+use mote_core::Error;
 use serde::Serialize;
 use utoipa::ToSchema;
-use web_note_core::Error;
 
 #[derive(Debug, Serialize, ToSchema)]
 pub struct ErrorBody {

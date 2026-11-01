@@ -6,7 +6,7 @@ mod static_files;
 
 use std::sync::Arc;
 
-use web_note_core::Notes;
+use mote_core::Notes;
 
 pub use openapi::openapi_json;
 

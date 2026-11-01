@@ -22,7 +22,7 @@ Commands are defined in `Taskfile.yml` and `web/package.json` scripts; read them
 
 - Dev: `task dev` (backend and frontend together)
 - Regenerate `openapi.json` and `schema.d.ts` after changing server DTOs or routes: `task openapi`
-- Bump version: update `crates/core/Cargo.toml`, `crates/server/Cargo.toml` (including its `web-note-core` dependency version) and `web/package.json`, then run `task openapi` (refreshes `Cargo.lock` and `openapi.json`)
+- Bump version: update `crates/core/Cargo.toml`, `crates/server/Cargo.toml` (including its `mote-core` dependency version) and `web/package.json`, then run `task openapi` (refreshes `Cargo.lock` and `openapi.json`)
 - Rust tests: `cargo test`
 - Frontend type check: `pnpm --dir web typecheck`
 - Frontend lint: `pnpm --dir web lint`; auto-fix: `pnpm --dir web lint:fix`

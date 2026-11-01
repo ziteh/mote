@@ -1,12 +1,12 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "web-note",
+    "title": "mote",
     "description": "",
     "license": {
       "name": ""
     },
-    "version": "0.3.0"
+    "version": "0.3.1"
   },
   "paths": {
     "/api/assets": {

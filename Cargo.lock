@@ -1018,6 +1018,46 @@ dependencies = [
 ]
 
 [[package]]
+name = "mote-core"
+version = "0.3.1"
+dependencies = [
+ "anyhow",
+ "blake3",
+ "nanoid",
+ "pulldown-cmark",
+ "rumdl",
+ "rusqlite",
+ "serde",
+ "serde_yaml_ng",
+ "tempfile",
+ "thiserror",
+ "time",
+ "unicode-normalization",
+]
+
+[[package]]
+name = "mote-server"
+version = "0.3.1"
+dependencies = [
+ "anyhow",
+ "axum",
+ "axum-extra",
+ "clap",
+ "http-body-util",
+ "mime_guess",
+ "mote-core",
+ "rust-embed",
+ "serde",
+ "serde_json",
+ "tempfile",
+ "tokio",
+ "tower",
+ "utoipa",
+ "utoipa-axum",
+ "utoipa-swagger-ui",
+]
+
+[[package]]
 name = "nanoid"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2445,46 +2485,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "23f0c9c52aa7cd7d77769a4cfe2a9adb1b331f489a41d912ce14513d5ab995c6"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "web-note-core"
-version = "0.3.0"
-dependencies = [
- "anyhow",
- "blake3",
- "nanoid",
- "pulldown-cmark",
- "rumdl",
- "rusqlite",
- "serde",
- "serde_yaml_ng",
- "tempfile",
- "thiserror",
- "time",
- "unicode-normalization",
-]
-
-[[package]]
-name = "web-note-server"
-version = "0.3.0"
-dependencies = [
- "anyhow",
- "axum",
- "axum-extra",
- "clap",
- "http-body-util",
- "mime_guess",
- "rust-embed",
- "serde",
- "serde_json",
- "tempfile",
- "tokio",
- "tower",
- "utoipa",
- "utoipa-axum",
- "utoipa-swagger-ui",
- "web-note-core",
 ]
 
 [[package]]

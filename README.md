@@ -1,6 +1,6 @@
-# Web Note
+# Mote
 
-A simple web-based Markdown note-taking app. `.md` is the single source of truth. [Demo](https://web-note.ziteh.dev)
+A simple web-based Markdown note-taking app. `.md` is the single source of truth. [Demo](https://mote.ziteh.dev)
 
 - Single executable, the frontend is embedded in the binary
 - Embedded image
@@ -13,10 +13,10 @@ A simple web-based Markdown note-taking app. `.md` is the single source of truth
 ## Usage
 
 ```sh
-web-note-server # Default notes directory: Notes/
-web-note-server --notes-dir path/to/notes
-web-note-server --port 5393
-web-note-server --help # More info
+mote-server # Default notes directory: Notes/
+mote-server --notes-dir path/to/notes
+mote-server --port 5393
+mote-server --help # More info
 ```
 
 <http://localhost:5393>
@@ -50,9 +50,9 @@ tags:
 
 ```sh
 # BE
-cargo run -p web-note-server
+cargo run -p mote-server
 # or with Swagger UI at /swagger-ui
-cargo run -p web-note-server --features swagger
+cargo run -p mote-server --features swagger
 
 # FE
 pnpm --dir web install
@@ -70,7 +70,7 @@ pnpm --dir web exec biome check .. --write
 Generate `openapi.json` after the API changes:
 
 ```sh
-cargo run -p web-note-server -- --openapi > openapi.json
+cargo run -p mote-server -- --openapi > openapi.json
 pnpm --dir web exec biome format --write ../openapi.json
 pnpm --dir web gen:api
 ```
@@ -79,7 +79,7 @@ Release build:
 
 ```sh
 pnpm --dir web build
-cargo build --release -p web-note-server
+cargo build --release -p mote-server
 ```
 
 Cross-compile a statically linked Linux x86_64 binary (musl) with [cargo-zigbuild](https://github.com/rust-cross/cargo-zigbuild). Requires `zig`, which is needed to build the bundled SQLite:
@@ -87,10 +87,10 @@ Cross-compile a statically linked Linux x86_64 binary (musl) with [cargo-zigbuil
 ```sh
 rustup target add x86_64-unknown-linux-musl
 pnpm --dir web build
-cargo zigbuild --release -p web-note-server --target x86_64-unknown-linux-musl
+cargo zigbuild --release -p mote-server --target x86_64-unknown-linux-musl
 ```
 
-The output is `target/x86_64-unknown-linux-musl/release/web-note-server`. It has no glibc dependency, so it can be copied to and run on any Linux x86_64 host.
+The output is `target/x86_64-unknown-linux-musl/release/mote-server`. It has no glibc dependency, so it can be copied to and run on any Linux x86_64 host.
 
 ## Tech Stack
 

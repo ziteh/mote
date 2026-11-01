@@ -3,7 +3,7 @@ tags: [welcome]
 ---
 # Welcome
 
-Welcome to the [Web Note](https://github.com/ziteh/web-note) live demo. Everything runs in your browser and resets when you reload.
+Welcome to the [Mote](https://github.com/ziteh/mote) live demo. Everything runs in your browser and resets when you reload.
 
 Notes are plain Markdown files. Try editing this one, it saves automatically.
 

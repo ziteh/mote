@@ -1,6 +1,6 @@
+use mote_core as core;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-use web_note_core as core;
 
 #[derive(Serialize, ToSchema)]
 pub struct Snippet {

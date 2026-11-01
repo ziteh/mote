@@ -2,7 +2,7 @@ use std::{net::IpAddr, net::SocketAddr, path::PathBuf, sync::Arc};
 
 use anyhow::Context;
 use clap::Parser;
-use web_note_core::Notes;
+use mote_core::Notes;
 
 #[derive(Parser)]
 #[command(version)]
@@ -30,7 +30,7 @@ struct Args {
 async fn main() -> anyhow::Result<()> {
     let args = Args::parse();
     if args.openapi {
-        println!("{}", web_note_server::openapi_json());
+        println!("{}", mote_server::openapi_json());
         return Ok(());
     }
 
@@ -43,9 +43,9 @@ async fn main() -> anyhow::Result<()> {
     let notes = Arc::new(notes);
 
     #[cfg(feature = "swagger")]
-    let app = web_note_server::app_with_swagger(notes);
+    let app = mote_server::app_with_swagger(notes);
     #[cfg(not(feature = "swagger"))]
-    let app = web_note_server::app(notes);
+    let app = mote_server::app(notes);
 
     let addr = SocketAddr::new(args.bind, args.port);
     let listener = tokio::net::TcpListener::bind(addr)

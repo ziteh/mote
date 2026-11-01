@@ -6,9 +6,9 @@ use axum::{
     http::{Method, Request, StatusCode},
 };
 use http_body_util::BodyExt;
+use mote_core::Notes;
 use serde_json::{Value, json};
 use tower::ServiceExt;
-use web_note_core::Notes;
 
 const PNG: &[u8] = b"\x89PNG\r\n\x1a\nrest";
 
@@ -22,7 +22,7 @@ impl Client {
         let dir = tempfile::tempdir().unwrap();
         let notes = Arc::new(Notes::open(dir.path(), None, 1024).unwrap());
         Self {
-            app: web_note_server::app(notes),
+            app: mote_server::app(notes),
             _dir: dir,
         }
     }
@@ -294,7 +294,7 @@ async fn rescan_reports_corrupt_files() {
     let dir = tempfile::tempdir().unwrap();
     let notes = Arc::new(Notes::open(dir.path(), None, 1024).unwrap());
     let c = Client {
-        app: web_note_server::app(notes),
+        app: mote_server::app(notes),
         _dir: tempfile::tempdir().unwrap(),
     };
     fs::write(dir.path().join("Inbox/bad.md"), "---\nid: x\nno closing\n").unwrap();
@@ -309,9 +309,9 @@ fn committed_openapi_is_up_to_date() {
     let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../openapi.json");
     let committed = fs::read_to_string(path).expect("openapi.json is committed");
     let committed: Value = serde_json::from_str(&committed).unwrap();
-    let current: Value = serde_json::from_str(&web_note_server::openapi_json()).unwrap();
+    let current: Value = serde_json::from_str(&mote_server::openapi_json()).unwrap();
     assert_eq!(
         committed, current,
-        "regenerate with: cargo run -p web-note-server -- --openapi > openapi.json"
+        "regenerate with: cargo run -p mote-server -- --openapi > openapi.json"
     );
 }

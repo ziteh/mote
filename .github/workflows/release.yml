@@ -16,16 +16,16 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
-            name: web-note-server-x86_64-linux
-            bin: web-note-server
+            name: mote-server-x86_64-linux
+            bin: mote-server
           - os: windows-latest
             target: x86_64-pc-windows-msvc
-            name: web-note-server-x86_64-windows.exe
-            bin: web-note-server.exe
+            name: mote-server-x86_64-windows.exe
+            bin: mote-server.exe
           - os: macos-latest
             target: aarch64-apple-darwin
-            name: web-note-server-aarch64-macos
-            bin: web-note-server
+            name: mote-server-aarch64-macos
+            bin: mote-server
     runs-on: ${{ matrix.os }}
     defaults:
       run:
@@ -54,7 +54,7 @@ jobs:
 
       - run: pnpm --dir web build
 
-      - run: cargo build --release -p web-note-server --target ${{ matrix.target }}
+      - run: cargo build --release -p mote-server --target ${{ matrix.target }}
 
       - name: Package
         run: cp "target/${{ matrix.target }}/release/${{ matrix.bin }}" "${{ matrix.name }}"

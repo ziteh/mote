@@ -4,10 +4,10 @@ use axum::{
     http::StatusCode,
 };
 use axum_extra::extract::Query;
+use mote_core::{format, index};
 use serde::Deserialize;
 use utoipa::IntoParams;
 use utoipa_axum::{router::OpenApiRouter, routes};
-use web_note_core::{format, index};
 
 use super::run;
 use crate::{
