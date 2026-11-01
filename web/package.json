@@ -8,6 +8,9 @@
     "build": "tsc -b && vite build",
     "gen:api": "openapi-typescript ../openapi.json -o src/api/schema.d.ts",
     "preview": "vite preview",
+    "typecheck": "tsc -b",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
     "test": "node --test"
   },
   "dependencies": {
