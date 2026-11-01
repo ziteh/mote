@@ -1,5 +1,5 @@
 import { syntaxTree } from "@codemirror/language";
-import type { Extension, Range } from "@codemirror/state";
+import type { EditorState, Extension, Range } from "@codemirror/state";
 import {
   Decoration,
   type DecorationSet,
@@ -11,6 +11,10 @@ import { inCode } from "./syntax";
 
 const SAFE_URL = /^https?:\/\//i;
 
+function touchesSelection(state: EditorState, from: number, to: number) {
+  return state.selection.ranges.some((r) => r.from <= to && r.to >= from);
+}
+
 function buildDecorations(view: EditorView) {
   const { state } = view;
   const ranges: Range<Decoration>[] = [];
@@ -19,6 +23,25 @@ function buildDecorations(view: EditorView) {
       from,
       to,
       enter(node) {
+        if (node.name === "Link") {
+          const marks = node.node.getChildren("LinkMark");
+          const urlNode = node.node.getChild("URL");
+          if (marks.length < 4 || !urlNode || inCode(state, node.from)) return;
+          const url = state.sliceDoc(urlNode.from, urlNode.to);
+          if (!SAFE_URL.test(url)) return;
+          if (touchesSelection(state, node.from, node.to)) return;
+          const open = marks[0];
+          const close = marks[1];
+          ranges.push(
+            Decoration.replace({}).range(node.from, open.to),
+            Decoration.mark({
+              class: "cm-url",
+              attributes: { "data-url": url },
+            }).range(open.to, close.from),
+            Decoration.replace({}).range(close.from, node.to),
+          );
+          return false;
+        }
         if (node.name !== "URL" || inCode(state, node.from)) return;
         const url = state.sliceDoc(node.from, node.to);
         if (!SAFE_URL.test(url)) return;
@@ -34,7 +57,7 @@ function buildDecorations(view: EditorView) {
   return Decoration.set(ranges, true);
 }
 
-/** Underlines http(s) URLs; clicking one opens it in a new tab. */
+/** Underlines http(s) URLs and renders `[text](url)` as its text; clicking one opens it in a new tab. */
 export function urlLinks(): Extension {
   return ViewPlugin.fromClass(
     class {
@@ -45,7 +68,11 @@ export function urlLinks(): Extension {
       }
 
       update(update: ViewUpdate) {
-        if (update.docChanged || update.viewportChanged) {
+        if (
+          update.docChanged ||
+          update.viewportChanged ||
+          update.selectionSet
+        ) {
           this.decorations = buildDecorations(update.view);
         }
       }
