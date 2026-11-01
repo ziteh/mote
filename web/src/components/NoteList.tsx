@@ -19,12 +19,7 @@ import { useFilters } from "~/lib/filters";
 import { type MessageKey, t } from "~/lib/i18n";
 import { formatDate, noteTitle, setDeletedId } from "~/lib/note";
 import { type Sort, setSort, sort, sortNotes } from "~/lib/sort";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-} from "./ui/alert-dialog";
+import ConfirmDialog from "./ConfirmDialog";
 import { Badge } from "./ui/badge";
 import { Button, buttonVariants } from "./ui/button";
 import {
@@ -274,35 +269,20 @@ export default function NoteList(props: Props) {
         </Show>
       </ul>
 
-      <AlertDialog
+      <ConfirmDialog
         open={pendingDelete() !== undefined}
+        title={t("deleteNote")}
+        description={t("deleteNoteConfirm", {
+          count: pendingDelete()?.backlinks ?? 0,
+        })}
+        confirmLabel={t("delete")}
         onOpenChange={(open) => !open && setPendingDelete(undefined)}
-      >
-        <AlertDialogContent>
-          <AlertDialogTitle>{t("deleteNote")}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {t("deleteNoteConfirm", { count: pendingDelete()?.backlinks ?? 0 })}
-          </AlertDialogDescription>
-          <div class="flex justify-end gap-2">
-            <Button
-              variant="outline"
-              onClick={() => setPendingDelete(undefined)}
-            >
-              {t("cancel")}
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                const id = pendingDelete()?.id;
-                setPendingDelete(undefined);
-                if (id) void remove(id);
-              }}
-            >
-              {t("delete")}
-            </Button>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
+        onConfirm={() => {
+          const id = pendingDelete()?.id;
+          setPendingDelete(undefined);
+          if (id) void remove(id);
+        }}
+      />
     </div>
   );
 }

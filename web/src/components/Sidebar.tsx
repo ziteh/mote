@@ -17,10 +17,10 @@ import { useFilters } from "~/lib/filters";
 import { t } from "~/lib/i18n";
 import { DEFAULT_NOTEBOOK } from "~/lib/note";
 import { isDark, toggleTheme } from "~/lib/theme";
+import ConfirmDialog from "./ConfirmDialog";
 import {
   AlertDialog,
   AlertDialogContent,
-  AlertDialogDescription,
   AlertDialogTitle,
 } from "./ui/alert-dialog";
 import { Button, buttonVariants } from "./ui/button";
@@ -46,6 +46,15 @@ export default function Sidebar(props: { onPick?: () => void }) {
   const { filters, update } = useFilters();
   const [dialog, setDialog] = createSignal<Dialog>();
   const [draft, setDraft] = createSignal("");
+
+  const deleting = () => {
+    const current = dialog();
+    return current?.kind === "delete" ? current : undefined;
+  };
+  const naming = () => {
+    const current = dialog();
+    return current?.kind === "delete" ? undefined : current;
+  };
 
   const pick = (patch: Parameters<typeof update>[0]) => {
     update(patch, "/");
@@ -235,68 +244,48 @@ export default function Sidebar(props: { onPick?: () => void }) {
         </p>
       </Show>
 
+      <ConfirmDialog
+        open={deleting() !== undefined}
+        title={t("deleteNotebook")}
+        description={t("deleteNotebookConfirm", {
+          name: deleting()?.name ?? "",
+        })}
+        confirmLabel={t("delete")}
+        onOpenChange={(open) => !open && setDialog(undefined)}
+        onConfirm={() => {
+          const name = deleting()?.name;
+          if (name) void confirmDelete(name);
+        }}
+      />
+
       <AlertDialog
-        open={dialog() !== undefined}
+        open={naming() !== undefined}
         onOpenChange={(open) => !open && setDialog(undefined)}
       >
         <AlertDialogContent>
-          {(() => {
-            const current = dialog();
-            if (current?.kind === "delete") {
-              return (
-                <>
-                  <AlertDialogTitle>{t("deleteNotebook")}</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    {t("deleteNotebookConfirm", { name: current.name })}
-                  </AlertDialogDescription>
-                  <div class="flex justify-end gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setDialog(undefined)}
-                    >
-                      {t("cancel")}
-                    </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => void confirmDelete(current.name)}
-                    >
-                      {t("delete")}
-                    </Button>
-                  </div>
-                </>
-              );
-            }
-            return (
-              <>
-                <AlertDialogTitle>
-                  {current?.kind === "rename"
-                    ? t("renameNotebook")
-                    : current?.kind === "renameTag"
-                      ? t("renameTag")
-                      : t("newNotebook")}
-                </AlertDialogTitle>
-                <TextField value={draft()} onChange={setDraft}>
-                  <TextFieldInput
-                    autofocus
-                    onKeyDown={(e: KeyboardEvent) =>
-                      e.key === "Enter" && !e.isComposing && submitName()
-                    }
-                  />
-                </TextField>
-                <div class="flex justify-end gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => setDialog(undefined)}
-                  >
-                    {t("cancel")}
-                  </Button>
-                  <Button disabled={!draft().trim()} onClick={submitName}>
-                    {current?.kind === "create" ? t("create") : t("rename")}
-                  </Button>
-                </div>
-              </>
-            );
-          })()}
+          <AlertDialogTitle>
+            {naming()?.kind === "rename"
+              ? t("renameNotebook")
+              : naming()?.kind === "renameTag"
+                ? t("renameTag")
+                : t("newNotebook")}
+          </AlertDialogTitle>
+          <TextField value={draft()} onChange={setDraft}>
+            <TextFieldInput
+              autofocus
+              onKeyDown={(e: KeyboardEvent) =>
+                e.key === "Enter" && !e.isComposing && submitName()
+              }
+            />
+          </TextField>
+          <div class="flex justify-end gap-2">
+            <Button variant="outline" onClick={() => setDialog(undefined)}>
+              {t("cancel")}
+            </Button>
+            <Button disabled={!draft().trim()} onClick={submitName}>
+              {naming()?.kind === "create" ? t("create") : t("rename")}
+            </Button>
+          </div>
         </AlertDialogContent>
       </AlertDialog>
     </nav>

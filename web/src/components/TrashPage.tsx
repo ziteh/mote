@@ -7,12 +7,7 @@ import { useOrphanAssets, useRefreshNotes, useTrash } from "~/api/queries";
 import { reportError } from "~/lib/error";
 import { dateLocale, t } from "~/lib/i18n";
 import { noteTitle } from "~/lib/note";
-import {
-  AlertDialog,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-} from "./ui/alert-dialog";
+import ConfirmDialog from "./ConfirmDialog";
 import { Button } from "./ui/button";
 
 export default function TrashPage() {
@@ -147,22 +142,14 @@ export default function TrashPage() {
         </div>
       </section>
 
-      <AlertDialog open={confirmEmpty()} onOpenChange={setConfirmEmpty}>
-        <AlertDialogContent>
-          <AlertDialogTitle>{t("emptyTrash")}</AlertDialogTitle>
-          <AlertDialogDescription>
-            {t("emptyTrashConfirm")}
-          </AlertDialogDescription>
-          <div class="flex justify-end gap-2">
-            <Button variant="outline" onClick={() => setConfirmEmpty(false)}>
-              {t("cancel")}
-            </Button>
-            <Button variant="destructive" onClick={empty}>
-              {t("permanentDelete")}
-            </Button>
-          </div>
-        </AlertDialogContent>
-      </AlertDialog>
+      <ConfirmDialog
+        open={confirmEmpty()}
+        title={t("emptyTrash")}
+        description={t("emptyTrashConfirm")}
+        confirmLabel={t("permanentDelete")}
+        onOpenChange={setConfirmEmpty}
+        onConfirm={empty}
+      />
     </div>
   );
 }
