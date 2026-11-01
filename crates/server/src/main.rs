@@ -10,6 +10,10 @@ struct Args {
     /// The directory to store notes in.
     #[arg(long, env = "NOTES_DIR", default_value = "Notes")]
     notes_dir: PathBuf,
+    /// The directory to store the cache in. Defaults to `.cache` inside the
+    /// notes directory.
+    #[arg(long, env = "CACHE_DIR")]
+    cache_dir: Option<PathBuf>,
     #[arg(long, env = "BIND", default_value = "127.0.0.1")]
     bind: IpAddr,
     #[arg(long, env = "PORT", default_value_t = 5393)]
@@ -30,8 +34,12 @@ async fn main() -> anyhow::Result<()> {
         return Ok(());
     }
 
-    let notes = Notes::open(&args.notes_dir, args.max_asset_kib * 1024)
-        .context("failed to open notes directory")?;
+    let notes = Notes::open(
+        &args.notes_dir,
+        args.cache_dir.as_deref(),
+        args.max_asset_kib * 1024,
+    )
+    .context("failed to open notes directory")?;
     let notes = Arc::new(notes);
 
     #[cfg(feature = "swagger")]

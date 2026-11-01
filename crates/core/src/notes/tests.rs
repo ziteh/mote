@@ -4,7 +4,7 @@ use super::*;
 
 fn open() -> (tempfile::TempDir, Notes) {
     let dir = tempfile::tempdir().unwrap();
-    let notes = Notes::open(dir.path(), 1024).unwrap();
+    let notes = Notes::open(dir.path(), None, 1024).unwrap();
     (dir, notes)
 }
 
@@ -380,14 +380,14 @@ fn rescan_reports_duplicates_until_dismissed() {
 fn reopen_reuses_index_and_sees_files() {
     let dir = tempfile::tempdir().unwrap();
     let id = {
-        let notes = Notes::open(dir.path(), 1024).unwrap();
+        let notes = Notes::open(dir.path(), None, 1024).unwrap();
         notes
             .create(DEFAULT_NOTEBOOK, "# Persist\n", &[])
             .unwrap()
             .meta
             .id
     };
-    let notes = Notes::open(dir.path(), 1024).unwrap();
+    let notes = Notes::open(dir.path(), None, 1024).unwrap();
     assert_eq!(
         notes.get(&id).unwrap().meta.title.as_deref(),
         Some("Persist")

@@ -52,16 +52,18 @@ pub struct Notes {
 }
 
 impl Notes {
-    pub fn open(root: &Path, max_asset_bytes: u64) -> Result<Self> {
+    /// `cache_dir` defaults to a directory inside `root`.
+    pub fn open(root: &Path, cache_dir: Option<&Path>, max_asset_bytes: u64) -> Result<Self> {
+        let cache_dir = cache_dir.map_or_else(|| root.join(CACHE_DIR), Path::to_path_buf);
         for dir in [
             root.join(DEFAULT_NOTEBOOK),
             root.join(ASSETS_DIR),
             root.join(TRASH_DIR),
-            root.join(CACHE_DIR),
+            cache_dir.clone(),
         ] {
             fs::create_dir_all(&dir).map_err(|e| io_err(&dir, e))?;
         }
-        let conn = index::open(&root.join(CACHE_DIR).join(DB_FILE))?;
+        let conn = index::open(&cache_dir.join(DB_FILE))?;
         let notes = Self {
             root: root.to_path_buf(),
             max_asset_bytes,

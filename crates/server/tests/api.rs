@@ -20,7 +20,7 @@ struct Client {
 impl Client {
     fn new() -> Self {
         let dir = tempfile::tempdir().unwrap();
-        let notes = Arc::new(Notes::open(dir.path(), 1024).unwrap());
+        let notes = Arc::new(Notes::open(dir.path(), None, 1024).unwrap());
         Self {
             app: web_note_server::app(notes),
             _dir: dir,
@@ -292,7 +292,7 @@ async fn trash_restore_and_traversal() {
 #[tokio::test]
 async fn rescan_reports_corrupt_files() {
     let dir = tempfile::tempdir().unwrap();
-    let notes = Arc::new(Notes::open(dir.path(), 1024).unwrap());
+    let notes = Arc::new(Notes::open(dir.path(), None, 1024).unwrap());
     let c = Client {
         app: web_note_server::app(notes),
         _dir: tempfile::tempdir().unwrap(),

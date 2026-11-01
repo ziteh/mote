@@ -28,7 +28,8 @@ Notes/
 ├── .assets/
 │   └── <hash>.<ext>
 ├── .trash/
-└── .cache/        # Can be added to .gitignore
+└── .cache/        # Default location, can be changed with --cache-dir
+                   # Can be added to .gitignore
     └── index.db
 ```
 
