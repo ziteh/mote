@@ -340,3 +340,61 @@
     --syntax-comment: 220 10% 40%;
   }
 }
+
+@layer components {
+  .markdown-preview {
+    @apply min-w-0 break-words text-sm leading-relaxed;
+  }
+  .markdown-preview > * + * {
+    @apply mt-3;
+  }
+  .markdown-preview h1,
+  .markdown-preview h2,
+  .markdown-preview h3,
+  .markdown-preview h4 {
+    @apply font-semibold;
+  }
+  .markdown-preview h1 {
+    @apply border-b pb-1 text-2xl;
+  }
+  .markdown-preview h2 {
+    @apply border-b pb-1 text-xl;
+  }
+  .markdown-preview h3 {
+    @apply text-lg;
+  }
+  .markdown-preview a {
+    @apply text-primary underline;
+  }
+  .markdown-preview ul {
+    @apply list-disc pl-6;
+  }
+  .markdown-preview ol {
+    @apply list-decimal pl-6;
+  }
+  .markdown-preview blockquote {
+    @apply border-l-4 pl-3 text-muted-foreground;
+  }
+  .markdown-preview code {
+    @apply rounded bg-muted px-1 py-0.5 font-mono text-xs;
+  }
+  .markdown-preview pre {
+    @apply overflow-auto rounded-md bg-muted p-3;
+  }
+  .markdown-preview pre code {
+    @apply bg-transparent p-0;
+  }
+  .markdown-preview img {
+    @apply max-w-full;
+  }
+  .markdown-preview table {
+    @apply border-collapse;
+  }
+  .markdown-preview th,
+  .markdown-preview td {
+    @apply border px-2 py-1;
+  }
+  .markdown-preview hr {
+    @apply border-border;
+  }
+}

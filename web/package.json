@@ -35,6 +35,8 @@
     "@tanstack/solid-query": "^5.104.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "dompurify": "^3.4.17",
+    "marked": "^18.1.2",
     "openapi-fetch": "^0.17.0",
     "solid-js": "^1.9.15",
     "solid-sonner": "^0.3.2",

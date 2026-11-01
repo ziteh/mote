@@ -1,4 +1,5 @@
 import { redo, undo } from "@codemirror/commands";
+import { EditorView } from "@codemirror/view";
 import { A, useNavigate } from "@solidjs/router";
 import { useQueryClient } from "@tanstack/solid-query";
 import {
@@ -23,6 +24,7 @@ import {
 import ArrowUndoIcon from "~/assets/arrow-u-up-left.svg";
 import ArrowRedoIcon from "~/assets/arrow-u-up-right.svg";
 import CheckIcon from "~/assets/check.svg";
+import ColumnsIcon from "~/assets/columns.svg";
 import InfoIcon from "~/assets/info.svg";
 import MagicWandIcon from "~/assets/magic-wand.svg";
 import UpdateIcon from "~/assets/update.svg";
@@ -31,8 +33,10 @@ import XIcon from "~/assets/x.svg";
 import { createExtensions } from "~/editor/extensions";
 import { EditorSession, type SaveStatus } from "~/editor/session";
 import { lookupChanged } from "~/editor/wikilink";
+import { setSplit, split } from "~/lib/editor-mode";
 import { type MessageKey, t } from "~/lib/i18n";
 import { deletedId, formatDateFull, noteTitle } from "~/lib/note";
+import MarkdownPreview from "./MarkdownPreview";
 import TagEditor from "./TagEditor";
 import { Button } from "./ui/button";
 
@@ -68,6 +72,7 @@ export default function NotePane(props: Props) {
   const [status, setStatus] = createSignal<SaveStatus>("saved");
   const [showInfo, setShowInfo] = createSignal(false);
   const [tags, setTags] = createSignal<string[]>([]);
+  const [body, setBody] = createSignal("");
 
   const byId = createMemo(
     () => new Map((allNotes.data ?? []).map((n) => [n.id, n])),
@@ -84,11 +89,19 @@ export default function NotePane(props: Props) {
   onMount(() => {
     session = new EditorSession(
       host,
-      createExtensions({
-        lookup: { get: (id) => byId().get(id), all: () => allNotes.data ?? [] },
-        onOpenNote: (id) => navigate(`/n/${id}${location.search}`),
-        onError: (message) => toast.error(message),
-      }),
+      [
+        ...createExtensions({
+          lookup: {
+            get: (id) => byId().get(id),
+            all: () => allNotes.data ?? [],
+          },
+          onOpenNote: (id) => navigate(`/n/${id}${location.search}`),
+          onError: (message) => toast.error(message),
+        }),
+        EditorView.updateListener.of((update) => {
+          if (update.docChanged) setBody(update.state.doc.toString());
+        }),
+      ],
       {
         onStatus: setStatus,
         onTags: setTags,
@@ -113,11 +126,17 @@ export default function NotePane(props: Props) {
 
   createEffect(() => {
     const data = note.data;
-    if (data && data.meta.id === props.id) session?.open(data);
+    if (data && data.meta.id === props.id) {
+      session?.open(data);
+      setBody(session?.editorView.state.doc.toString() ?? "");
+    }
   });
 
   createEffect(() => {
-    if (props.id === undefined) session?.close();
+    if (props.id === undefined) {
+      session?.close();
+      setBody("");
+    }
   });
 
   createEffect(() => {
@@ -221,6 +240,17 @@ export default function NotePane(props: Props) {
               variant="ghost"
               size="icon"
               class="size-6 shrink-0 [&>svg]:size-4"
+              classList={{ "bg-accent": split() }}
+              aria-label={t("toggleSplitView")}
+              title={t("toggleSplitView")}
+              onClick={() => setSplit(!split())}
+            >
+              <ColumnsIcon />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              class="size-6 shrink-0 [&>svg]:size-4"
               classList={{ "bg-accent": showInfo() }}
               aria-label={t("noteInfo")}
               title={t("noteInfo")}
@@ -292,10 +322,16 @@ export default function NotePane(props: Props) {
         <p class="p-4 text-destructive">{note.error?.message}</p>
       </Show>
       <div
-        ref={host}
-        class="min-h-0 flex-1 overflow-hidden"
+        class="flex min-h-0 flex-1"
         classList={{ hidden: props.id === undefined || note.isError }}
-      />
+      >
+        <div ref={host} class="min-h-0 min-w-0 flex-1 overflow-hidden" />
+        <Show when={split()}>
+          <div class="min-w-0 flex-1 overflow-auto border-l p-4">
+            <MarkdownPreview body={body()} />
+          </div>
+        </Show>
+      </div>
     </div>
   );
 }
