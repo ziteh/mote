@@ -6,7 +6,7 @@ import {
   StateField,
 } from "@codemirror/state";
 import { Decoration, EditorView, WidgetType } from "@codemirror/view";
-import { uploadAsset } from "~/api/client";
+import { assetUrl, uploadAsset } from "~/api/client";
 import { errorMessage } from "~/lib/error";
 
 const ASSET_PATH = /^\.\.\/\.assets\/([0-9a-f]+\.[a-z]+)$/;
@@ -43,7 +43,7 @@ function buildDecorations(state: EditorState) {
       if (!match) return;
       ranges.push(
         Decoration.widget({
-          widget: new ImageWidget(`/api/assets/${match[1]}`),
+          widget: new ImageWidget(assetUrl(match[1])),
           block: true,
           side: 1,
         }).range(state.doc.lineAt(node.to).to),

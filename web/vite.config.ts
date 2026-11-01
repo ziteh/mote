@@ -29,7 +29,8 @@ function brotli(): Plugin {
 }
 
 export default defineConfig({
-  plugins: [solid(), solidSvg(), brotli()],
+  // Static hosts do not send `Content-Encoding: br`, so the demo keeps plain files.
+  plugins: [solid(), solidSvg(), ...(process.env.VITE_DEMO ? [] : [brotli()])],
   resolve: {
     alias: {
       "~": path.resolve(import.meta.dirname, "./src"),

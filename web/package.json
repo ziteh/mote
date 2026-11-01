@@ -7,6 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "gen:api": "openapi-typescript ../openapi.json -o src/api/schema.d.ts",
+    "build:demo": "VITE_DEMO=1 tsc -b && VITE_DEMO=1 vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "lint": "biome check",

@@ -1,7 +1,13 @@
 import createClient from "openapi-fetch";
+import { demoAssetUrl, demoUpload } from "~/demo/assets";
 import type { components, paths } from "./schema";
 
-export const api = createClient<paths>({ baseUrl: "" });
+export const api = createClient<paths>({
+  baseUrl: "",
+  fetch: import.meta.env.VITE_DEMO
+    ? async (request) => (await import("~/demo/fetch")).demoFetch(request)
+    : undefined,
+});
 
 export type NoteMeta = components["schemas"]["NoteMeta"];
 export type Note = components["schemas"]["Note"];
@@ -36,10 +42,16 @@ export async function unwrap<T>(
   return data as T;
 }
 
+/** Demo builds have no backend, so images come from bundled files or this visit's uploads. */
+export function assetUrl(name: string) {
+  return import.meta.env.VITE_DEMO ? demoAssetUrl(name) : `/api/assets/${name}`;
+}
+
 export type AssetUploaded = components["schemas"]["AssetUploaded"];
 
 /** Sends raw image bytes; the generated client has no typed raw-body support. */
 export async function uploadAsset(file: Blob): Promise<AssetUploaded> {
+  if (import.meta.env.VITE_DEMO) return demoUpload(file);
   const response = await fetch("/api/assets", { method: "POST", body: file });
   if (!response.ok) {
     const body = (await response.json().catch(() => ({}))) as {
