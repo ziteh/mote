@@ -71,6 +71,13 @@ const zhHant: Record<keyof typeof en, string> = {
   deleteNotebook: "刪除筆記本",
   deleteNotebookConfirm: "要刪除筆記本「{name}」嗎？只有空的筆記本可以刪除。",
   renameTag: "重新命名標籤",
+  tableAddRow: "新增列",
+  tableAddColumn: "新增欄",
+  tableDeleteRow: "刪除列",
+  tableDeleteColumn: "刪除欄",
+  tableAlignLeft: "靠左",
+  tableAlignCenter: "置中",
+  tableAlignRight: "靠右",
 };
 
 export default zhHant;

@@ -110,10 +110,9 @@ const base = EditorView.theme({
   },
   ".cm-code-block": { backgroundColor: "hsl(var(--muted))" },
   ".cm-task-checkbox": { margin: "0 0.25rem 0 0", verticalAlign: "middle" },
+  ".cm-table-root": { padding: "0.5rem 1rem" },
   ".cm-table": {
     overflowX: "auto",
-    margin: "0.5rem 1rem",
-    cursor: "text",
     whiteSpace: "normal",
     contain: "inline-size",
   },
@@ -123,8 +122,32 @@ const base = EditorView.theme({
     padding: "0.25rem 0.5rem",
     maxWidth: "24rem",
     lineHeight: "1.5",
+    textAlign: "left",
+    cursor: "text",
   },
   ".cm-table th": { backgroundColor: "hsl(var(--muted))" },
+  ".cm-table-editing": {
+    outline: "2px solid hsl(var(--primary))",
+    outlineOffset: "-2px",
+  },
+  ".cm-table-toolbar": {
+    display: "none",
+    flexWrap: "wrap",
+    gap: "0.25rem",
+    marginTop: "0.25rem",
+    fontSize: "0.8em",
+  },
+  ".cm-table-active .cm-table-toolbar": { display: "flex" },
+  ".cm-table-toolbar button": {
+    border: "1px solid hsl(var(--border))",
+    borderRadius: "0.25rem",
+    padding: "0 0.5rem",
+    color: "hsl(var(--muted-foreground))",
+  },
+  ".cm-table-toolbar button:hover": {
+    backgroundColor: "hsl(var(--accent))",
+    color: "hsl(var(--foreground))",
+  },
   ".cm-image": { display: "block", maxWidth: "100%", margin: "0.5rem 0" },
 });
 

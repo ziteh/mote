@@ -71,4 +71,11 @@ export default {
   deleteNotebookConfirm:
     "Delete notebook {name}? Only empty notebooks can be deleted.",
   renameTag: "Rename tag",
+  tableAddRow: "Add row",
+  tableAddColumn: "Add column",
+  tableDeleteRow: "Delete row",
+  tableDeleteColumn: "Delete column",
+  tableAlignLeft: "Left",
+  tableAlignCenter: "Center",
+  tableAlignRight: "Right",
 };

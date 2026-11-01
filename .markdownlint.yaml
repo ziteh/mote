@@ -57,7 +57,7 @@ table-pipe-style:
 # rumdl
 table-format:
   enabled: true
-  style: aligned
+  style: compact
 
 # Horizontal rule
 hr-style:
