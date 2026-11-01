@@ -23,12 +23,16 @@ class ImageWidget extends WidgetType {
     return other.src === this.src;
   }
 
-  toDOM() {
+  toDOM(view: EditorView) {
+    const wrap = document.createElement("div");
+    wrap.className = "cm-image-wrap";
     const img = document.createElement("img");
     img.className = "cm-image";
     img.src = this.src;
     img.alt = "";
-    return img;
+    img.addEventListener("load", () => view.requestMeasure());
+    wrap.appendChild(img);
+    return wrap;
   }
 }
 

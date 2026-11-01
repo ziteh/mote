@@ -148,7 +148,8 @@ const base = EditorView.theme({
     backgroundColor: "hsl(var(--accent))",
     color: "hsl(var(--foreground))",
   },
-  ".cm-image": { display: "block", maxWidth: "100%", margin: "0.5rem 0" },
+  ".cm-image-wrap": { padding: "0.5rem 0" },
+  ".cm-image": { display: "block", maxWidth: "100%" },
 });
 
 export const theme = [
