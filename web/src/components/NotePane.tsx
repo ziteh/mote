@@ -94,7 +94,7 @@ export default function NotePane(props: Props) {
         ...createExtensions({
           lookup: {
             get: (id) => byId().get(id),
-            all: () => allNotes.data ?? [],
+            all: () => (allNotes.data ?? []).filter((n) => n.id !== props.id),
           },
           onOpenNote: (id) => navigate(`/n/${id}${location.search}`),
           onError: (message) => toast.error(message),
