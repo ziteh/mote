@@ -2,6 +2,7 @@
 
 A simple web-based Markdown note-taking app. `.md` is the single source of truth.
 
+- Single executable, the frontend is embedded in the binary
 - Embedded image
 - Wikilink
 - Backlinks
@@ -38,13 +39,11 @@ Notes/
 Frontmatter:
 
 ```yaml
----
 id: <nanoID>
 created: <RFC 3339>
 updated: <RFC 3339>
 tags:
   - <tag>
----
 ```
 
 ## Development
