@@ -48,7 +48,7 @@ tags:
 
 ## Docker
 
-The image contains only the static binary, so it has no shell.
+The [image](https://github.com/ziteh/mote/pkgs/container/mote) contains only the static binary, so it has no shell.
 
 ```sh
 docker run -d --name web-note \
