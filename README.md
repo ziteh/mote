@@ -88,6 +88,15 @@ docker compose pull && docker compose up -d # Upgrade after changing the tag
 
 There is no authentication. Do not expose the port to untrusted networks; bind it to loopback (`127.0.0.1:5393:5393`) or put it behind an authenticating reverse proxy.
 
+## Logging
+
+Logs are plain text on stderr. Set the level with `RUST_LOG` (default `info`; `debug` also shows every request). There is no built-in log file; redirect stderr instead:
+
+```sh
+mote-server 2>> mote.log
+docker logs web-note # Configure rotation with the Docker `--log-opt` options
+```
+
 ## Development
 
 ```sh

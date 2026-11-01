@@ -2,7 +2,7 @@ use std::{
     collections::{HashMap, HashSet},
     fs,
     path::{Path, PathBuf},
-    time::UNIX_EPOCH,
+    time::{Instant, UNIX_EPOCH},
 };
 
 use rusqlite::Connection;
@@ -47,6 +47,7 @@ struct Known {
 /// Brings the index in line with the files under `root`. Only files whose
 /// mtime or size differ from the index are parsed.
 pub fn reconcile(conn: &mut Connection, root: &Path) -> Result<Report> {
+    let started = Instant::now();
     let files = scan(root)?;
     let tx = conn.transaction()?;
     tx.execute("DELETE FROM errors", [])?;
@@ -68,6 +69,7 @@ pub fn reconcile(conn: &mut Connection, root: &Path) -> Result<Report> {
         let mut doc = match read_document(&abs) {
             Ok(doc) => doc,
             Err(Error::CorruptFrontmatter(msg)) => {
+                tracing::warn!(path = %rel, error = %msg, "corrupt frontmatter");
                 tx.execute(
                     "INSERT INTO errors (path, message) VALUES (?1, ?2)",
                     [&rel, &msg],
@@ -86,6 +88,7 @@ pub fn reconcile(conn: &mut Connection, root: &Path) -> Result<Report> {
                 doc.created.get_or_insert(now);
                 doc.updated.get_or_insert(now);
                 write_document(&abs, &doc)?;
+                tracing::info!(path = %rel, "assigned id to note without one");
                 stat = stat_of(&abs)?;
                 new_id
             }
@@ -120,6 +123,11 @@ pub fn reconcile(conn: &mut Connection, root: &Path) -> Result<Report> {
     }
 
     tx.commit()?;
+    tracing::debug!(
+        notes = entries.len(),
+        elapsed_ms = started.elapsed().as_millis() as u64,
+        "index reconciled"
+    );
     Ok(Report { duplicates })
 }
 
@@ -151,6 +159,7 @@ fn resolve_duplicates(entries: &mut [Entry]) -> Result<Vec<Duplicate>> {
             write_document(&e.abs, &doc)?;
             e.stat = stat_of(&e.abs)?;
             e.doc = Some(doc);
+            tracing::warn!(path = %e.rel, "duplicate id, assigned a new one");
             fixed.push(Duplicate {
                 path: e.rel.clone(),
                 new_id: e.id.clone(),

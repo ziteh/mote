@@ -28,7 +28,7 @@ impl ApiError {
     }
 
     pub fn internal(err: impl std::fmt::Display) -> Self {
-        eprintln!("internal error: {err}");
+        tracing::error!(error = %err, "internal error");
         Self::new(
             StatusCode::INTERNAL_SERVER_ERROR,
             "internal",

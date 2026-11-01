@@ -1,8 +1,9 @@
-use std::{net::IpAddr, net::SocketAddr, path::PathBuf, sync::Arc};
+use std::{io::IsTerminal, net::IpAddr, net::SocketAddr, path::PathBuf, sync::Arc};
 
 use anyhow::Context;
 use clap::Parser;
 use mote_core::Notes;
+use tracing_subscriber::EnvFilter;
 
 #[derive(Parser)]
 #[command(version)]
@@ -34,6 +35,14 @@ async fn main() -> anyhow::Result<()> {
         return Ok(());
     }
 
+    tracing_subscriber::fmt()
+        .with_env_filter(
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
+        )
+        .with_writer(std::io::stderr)
+        .with_ansi(std::io::stderr().is_terminal())
+        .init();
+
     let notes = Notes::open(
         &args.notes_dir,
         args.cache_dir.as_deref(),
@@ -51,7 +60,7 @@ async fn main() -> anyhow::Result<()> {
     let listener = tokio::net::TcpListener::bind(addr)
         .await
         .with_context(|| format!("failed to bind {addr}"))?;
-    println!("listening on {addr}");
+    tracing::info!(%addr, "listening");
     axum::serve(listener, app).await?;
     Ok(())
 }
