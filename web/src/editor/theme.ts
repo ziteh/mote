@@ -131,13 +131,14 @@ const base = EditorView.theme({
     outlineOffset: "-2px",
   },
   ".cm-table-toolbar": {
-    display: "none",
+    visibility: "hidden",
+    display: "flex",
     flexWrap: "wrap",
     gap: "0.25rem",
     marginTop: "0.25rem",
     fontSize: "0.8em",
   },
-  ".cm-table-active .cm-table-toolbar": { display: "flex" },
+  ".cm-table-active .cm-table-toolbar": { visibility: "visible" },
   ".cm-table-toolbar button": {
     border: "1px solid hsl(var(--border))",
     borderRadius: "0.25rem",
