@@ -17,7 +17,7 @@ import { wikilinkText } from "~/editor/wikilink";
 import { reportError } from "~/lib/error";
 import { useFilters } from "~/lib/filters";
 import { type MessageKey, t } from "~/lib/i18n";
-import { formatDate, noteTitle, setDeletedId } from "~/lib/note";
+import { formatDate, noteHref, noteTitle, setDeletedId } from "~/lib/note";
 import { type Sort, setSort, sort, sortNotes } from "~/lib/sort";
 import ConfirmDialog from "./ConfirmDialog";
 import { Badge } from "./ui/badge";
@@ -99,7 +99,7 @@ export default function NoteList(props: Props) {
         }),
       );
       await refresh();
-      navigate(`/n/${created.meta.id}${location.search}`);
+      navigate(noteHref(created.meta.id));
     } catch (e) {
       reportError(e);
     }
@@ -295,7 +295,7 @@ function NoteRow(props: {
   onDelete: (id: string) => void;
 }) {
   const notebooks = useNotebooks();
-  const href = () => `/n/${props.note.id}${location.search}`;
+  const href = () => noteHref(props.note.id);
   const copyWikilink = async () => {
     try {
       await navigator.clipboard.writeText(wikilinkText(props.note));

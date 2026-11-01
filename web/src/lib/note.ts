@@ -7,6 +7,11 @@ export const DEFAULT_NOTEBOOK = "Inbox";
 /** Lets the editor drop local state for a note deleted from the list. */
 export const [deletedId, setDeletedId] = createSignal<string>();
 
+/** Keeps the current filters in the URL when moving between notes. */
+export function noteHref(id: string) {
+  return `/n/${id}${location.search}`;
+}
+
 export function noteTitle(note: Pick<NoteMeta, "title">) {
   return note.title ?? t("untitled");
 }

@@ -36,7 +36,7 @@ import { lookupChanged } from "~/editor/wikilink";
 import { setSplit, split } from "~/lib/editor-mode";
 import { reportError } from "~/lib/error";
 import { type MessageKey, t } from "~/lib/i18n";
-import { deletedId, formatDateFull, noteTitle } from "~/lib/note";
+import { deletedId, formatDateFull, noteHref, noteTitle } from "~/lib/note";
 import MarkdownPreview from "./MarkdownPreview";
 import TagEditor from "./TagEditor";
 import { Button } from "./ui/button";
@@ -97,7 +97,7 @@ export default function NotePane(props: Props) {
             get: (id) => byId().get(id),
             all: () => (allNotes.data ?? []).filter((n) => n.id !== props.id),
           },
-          onOpenNote: (id) => navigate(`/n/${id}${location.search}`),
+          onOpenNote: (id) => navigate(noteHref(id)),
           onError: (message) => toast.error(message),
         }),
         EditorView.updateListener.of((update) => {
@@ -310,7 +310,7 @@ export default function NotePane(props: Props) {
                     {(link) => (
                       <li>
                         <A
-                          href={`/n/${link.id}${location.search}`}
+                          href={noteHref(link.id)}
                           class="block truncate rounded px-2 py-1 hover:bg-accent"
                         >
                           {noteTitle(link)}

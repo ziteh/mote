@@ -7,6 +7,7 @@ import SidebarIcon from "~/assets/sidebar.svg";
 import { useFilters } from "~/lib/filters";
 import { t } from "~/lib/i18n";
 import { createIsDesktop } from "~/lib/media";
+import { noteHref } from "~/lib/note";
 import { panelSizes, setPanelSizes } from "~/lib/panel-sizes";
 import NoteList from "./NoteList";
 import NotePane from "./NotePane";
@@ -117,7 +118,7 @@ function MobileLayout(props: { id?: string }) {
         fallback={
           <NoteList
             onOpenSidebar={() => setShowSidebar(true)}
-            onSelect={(id) => navigate(`/n/${id}${location.search}`)}
+            onSelect={(id) => navigate(noteHref(id))}
           />
         }
       >
