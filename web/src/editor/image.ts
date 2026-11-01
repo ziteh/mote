@@ -10,6 +10,13 @@ import { assetUrl, uploadAsset } from "~/api/client";
 import { errorMessage } from "~/lib/error";
 
 const ASSET_PATH = /^\.\.\/\.assets\/([0-9a-f]+\.[a-z]+)$/;
+const EXTERNAL_URL = /^https?:\/\//i;
+
+function imageSrc(url: string) {
+  const match = ASSET_PATH.exec(url);
+  if (match) return assetUrl(match[1]);
+  return EXTERNAL_URL.test(url) ? url : null;
+}
 
 class ImageWidget extends WidgetType {
   src: string;
@@ -43,11 +50,11 @@ function buildDecorations(state: EditorState) {
       if (node.name !== "Image") return;
       const url = node.node.getChild("URL");
       if (!url) return;
-      const match = ASSET_PATH.exec(state.sliceDoc(url.from, url.to));
-      if (!match) return;
+      const src = imageSrc(state.sliceDoc(url.from, url.to));
+      if (!src) return;
       ranges.push(
         Decoration.widget({
-          widget: new ImageWidget(assetUrl(match[1])),
+          widget: new ImageWidget(src),
           block: true,
           side: 1,
         }).range(state.doc.lineAt(node.to).to),
@@ -57,7 +64,7 @@ function buildDecorations(state: EditorState) {
   return Decoration.set(ranges, true);
 }
 
-/** Shows images stored under `../.assets/` below the line that references them. */
+/** Shows images stored under `../.assets/` or at http(s) URLs below the line that references them. */
 const imageWidgets = StateField.define({
   create: buildDecorations,
   update: (value, tr) => (tr.docChanged ? buildDecorations(tr.state) : value),
