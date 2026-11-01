@@ -16,6 +16,7 @@ const zhHant: Record<keyof typeof en, string> = {
   uiTheme: "UI 主題",
   syntaxTheme: "程式碼主題",
   themeDefault: "預設",
+  version: "版本",
   loadErrors: "{count} 個檔案無法載入",
   noteListBack: "← 筆記列表",
   removeTag: "移除標籤",

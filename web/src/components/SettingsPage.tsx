@@ -96,6 +96,10 @@ export default function SettingsPage() {
         value={syntaxTheme()}
         onChange={setSyntaxTheme}
       />
+      <section class="flex flex-col gap-2">
+        <h2 class="font-semibold">{t("version")}</h2>
+        <p class="text-muted-foreground">{__APP_VERSION__}</p>
+      </section>
     </div>
   );
 }

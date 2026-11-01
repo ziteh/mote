@@ -28,9 +28,16 @@ function brotli(): Plugin {
   };
 }
 
+const { version } = JSON.parse(
+  readFileSync(path.resolve(import.meta.dirname, "package.json"), "utf8"),
+);
+
 export default defineConfig({
   // Static hosts do not send `Content-Encoding: br`, so the demo keeps plain files.
   plugins: [solid(), solidSvg(), ...(process.env.VITE_DEMO ? [] : [brotli()])],
+  define: {
+    __APP_VERSION__: JSON.stringify(version),
+  },
   resolve: {
     alias: {
       "~": path.resolve(import.meta.dirname, "./src"),

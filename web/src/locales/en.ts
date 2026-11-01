@@ -14,6 +14,7 @@ export default {
   uiTheme: "UI theme",
   syntaxTheme: "Code theme",
   themeDefault: "Default",
+  version: "Version",
   loadErrors: "{count} files failed to load",
   noteListBack: "← Notes",
   removeTag: "Remove tag",
